@@ -6,21 +6,35 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:06 by ebednar           #+#    #+#             */
-/*   Updated: 2020/03/15 22:29:15 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/03/15 22:57:04 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static char* LoadShader()
+static char* LoadShader(char *filepath)
 {
 	int fd;
 	char *line;
+	char *shader;
+	char *tmp;
 
-	if ((fd = open("res/shaders/VertexShader", O_RDONLY)) < 0)
+	shader = ft_strnew(0);
+	if ((fd = open(filepath, O_RDONLY)) < 0)
 		Error(3);
-	get_next_line(fd, &line);
-	return (line);
+	while(get_next_line(fd, &line))
+	{
+		if (!(tmp = ft_strjoin(shader, line)))
+			return (NULL);
+		free(shader);
+		free(line);
+		shader = tmp;
+		if (!(tmp = ft_strjoin(shader, "\n")))
+			return (NULL);
+		free(shader);
+		shader = tmp;
+	}
+	return (shader);
 }
 
 static unsigned int CompileShader(unsigned int type, const char* source)
@@ -47,26 +61,9 @@ static unsigned int CompileShader(unsigned int type, const char* source)
 }
 
 unsigned int CreateShader()
-{	char *line = LoadShader();
-	ft_putendl(line);
-	char* vertexShader = 
-	"#version 330 core\n  \
-	\n \
-	layout(location = 0) in vec4 position;\n \
-	\n \
-	void main()\n\
-	{\n\
-		gl_Position = position;\n\
-	}";
-	char* fragmentShader = 
-	"#version 330 core\n\
-	\n \
-	out vec4 color;\n\
-	\n \
-	void main()\n\
-	{\n\
-		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
-	}";
+{	
+	char* vertexShader = LoadShader("res/shaders/VertexShader");
+	char* fragmentShader = LoadShader("res/shaders/FragmentShader");
 	unsigned int program = glCreateProgram();
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);

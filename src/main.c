@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/03/15 22:25:34 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/03/15 23:03:53 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int		main(void)
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-
+		glfwSetKeyCallback(window, key_callback); 
         /* Poll for and process events */
         glfwPollEvents();
     }

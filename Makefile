@@ -6,13 +6,14 @@
 #    By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/20 14:23:06 by twitting          #+#    #+#              #
-#    Updated: 2020/03/15 21:36:31 by ebednar          ###   ########.fr        #
+#    Updated: 2020/03/15 23:03:11 by ebednar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = scop
 SRC = 	./src/main.c \
-		./src/loadShaders.c
+		./src/shaders.c \
+		./src/events.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror
