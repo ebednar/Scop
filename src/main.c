@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/03/15 21:45:50 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/03/15 22:25:34 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void Error(int code)
 		ft_putendl("glwf init error");
 	if (code == 2)
 		ft_putendl("glwf window creation error");
+	if (code == 3)
+		ft_putendl("can't read file");
 	exit(code);
 }
 
@@ -64,26 +66,7 @@ int		main(void)
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 	
-	char* vertexShader = 
-	"#version 330 core\n  \
-	\n \
-	layout(location = 0) in vec4 position;\n \
-	\n \
-	void main()\n\
-	{\n\
-		gl_Position = position;\n\
-	}";
-	char* fragmentShader = 
-	"#version 330 core\n\
-	\n \
-	out vec4 color;\n\
-	\n \
-	void main()\n\
-	{\n\
-		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
-	}";
-	
-	unsigned int shader = CreateShader(vertexShader, fragmentShader);
+	unsigned int shader = CreateShader();
 	
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

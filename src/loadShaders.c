@@ -6,11 +6,22 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:06 by ebednar           #+#    #+#             */
-/*   Updated: 2020/03/15 22:11:06 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/03/15 22:29:15 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
+
+static char* LoadShader()
+{
+	int fd;
+	char *line;
+
+	if ((fd = open("res/shaders/VertexShader", O_RDONLY)) < 0)
+		Error(3);
+	get_next_line(fd, &line);
+	return (line);
+}
 
 static unsigned int CompileShader(unsigned int type, const char* source)
 {
@@ -35,8 +46,27 @@ static unsigned int CompileShader(unsigned int type, const char* source)
 	return id;
 }
 
-unsigned int CreateShader(const char* vertexShader, const char* fragmentShader)
-{
+unsigned int CreateShader()
+{	char *line = LoadShader();
+	ft_putendl(line);
+	char* vertexShader = 
+	"#version 330 core\n  \
+	\n \
+	layout(location = 0) in vec4 position;\n \
+	\n \
+	void main()\n\
+	{\n\
+		gl_Position = position;\n\
+	}";
+	char* fragmentShader = 
+	"#version 330 core\n\
+	\n \
+	out vec4 color;\n\
+	\n \
+	void main()\n\
+	{\n\
+		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
+	}";
 	unsigned int program = glCreateProgram();
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
