@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/05 15:20:03 by twitting          #+#    #+#             */
-/*   Updated: 2020/03/06 19:02:18 by ebednar          ###   ########.fr       */
+/*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
+/*   Updated: 2020/03/15 21:45:50 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,38 @@
 void Error(int code)
 {
 	if (code == 1)
-		ft_putstr("glwf init error");
+		ft_putendl("glwf init error");
+	if (code == 2)
+		ft_putendl("glwf window creation error");
 	exit(code);
 }
 
-GLFWwindow* Init ()
+int		main(void)
 {
 	GLFWwindow* window;
 
 	/* Initialize the library */
     if (!glfwInit())
         Error(1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
-        Error(1);
+        Error(2);
     }
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-	return(window);
-}
-
-void GenBuffer()
-{
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	ft_putendl((char *)glGetString(GL_VERSION));
 	float pos[6] = {
 		-0.5f, -0.5f,
 		0.0f,  0.5f,
@@ -50,26 +55,45 @@ void GenBuffer()
 
 	unsigned int buffer;
 	glGenBuffers(1, &buffer);
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), pos, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-}
-
-int		main(void)
-{
-	GLFWwindow* window;
-
-	window = Init();
-	ft_putstr((char *)glGetString(GL_VERSION));
-	GenBuffer();
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	
+	char* vertexShader = 
+	"#version 330 core\n  \
+	\n \
+	layout(location = 0) in vec4 position;\n \
+	\n \
+	void main()\n\
+	{\n\
+		gl_Position = position;\n\
+	}";
+	char* fragmentShader = 
+	"#version 330 core\n\
+	\n \
+	out vec4 color;\n\
+	\n \
+	void main()\n\
+	{\n\
+		color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n\
+	}";
+	
+	unsigned int shader = CreateShader(vertexShader, fragmentShader);
+	
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
+		/* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-
+		glUseProgram(shader);
+		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindVertexArray(0); 
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -77,7 +101,6 @@ int		main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
-
     glfwTerminate();
-	return (0);
+	return 0;
 }
