@@ -12,7 +12,7 @@
 
 #ifndef SCOP_H
 # define SCOP_H
-
+# define GL_SILENCE_DEPRECATION
 #include <stdio.h>
 #include <stdlib.h>
 

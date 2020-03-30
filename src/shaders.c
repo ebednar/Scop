@@ -34,6 +34,7 @@ static char* LoadShader(char *filepath)
 		free(shader);
 		shader = tmp;
 	}
+	close(fd);
 	return (shader);
 }
 
@@ -86,4 +87,3 @@ unsigned int CreateShader()
 	glDeleteShader(fs);
 	return program;
 }
-
