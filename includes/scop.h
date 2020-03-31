@@ -37,6 +37,8 @@ typedef struct {
 	unsigned char	*data;
 } image;
 
+void			initGLFW();
+void			MakeContext(GLFWwindow* window);
 void			Error(int code);
 unsigned int	CreateShader();
 void			key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);

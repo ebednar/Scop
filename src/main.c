@@ -35,34 +35,22 @@ int		main(void)
 		Error(4);
 	if (!(ib = (indexBuf *)malloc(sizeof(indexBuf))))
 		Error(4);
-	/* Initialize the library */
-    if (!glfwInit())
-        Error(1);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         Error(2);
     }
-
     /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
+	MakeContext(window);
 	ft_putendl((char *)glGetString(GL_VERSION));
 	float pos[] = {
-		-0.5f, -0.5f,
-		 0.5f, -0.5f,
-		 0.5f,  0.5f,
-		-0.5f,  0.5f
+		-0.5f, -0.5f, 0.0f, 0.0f,
+		 0.5f, -0.5f, 1.0f, 0.0f,
+		 0.5f,  0.5f, 1.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f, 1.0f
 	};
 	unsigned int indicies[] = {
 		0, 1, 2,
@@ -73,18 +61,21 @@ int		main(void)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	VertexBuffer(vb, pos, 4 * 2 * sizeof(float));
+	VertexBuffer(vb, pos, 4 * 4 * sizeof(float));
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-	
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 4 * sizeof(float), (GLvoid*)(2 * sizeof(GLfloat)));
+
 	IndexBuffer(ib, indicies, 6);
 
-	unsigned int texture = LoadImage("res/textures/wood.bmp");
+	unsigned int texture = LoadImage("res/textures/stones.bmp");
 	texture = 0;
 
 	unsigned int shader = CreateShader();
 	int location = glGetUniformLocation(shader, "u_Color");
+	int texCoord = glGetUniformLocation(shader, "u_Texture");
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -101,6 +92,7 @@ int		main(void)
 		
 		glUseProgram(shader);
 		glUniform4f(location, r, 1 - r, 0.5f, 1.0f);
+		glUniform1i(texCoord, 0);
 
 		glBindVertexArray(VAO);
 		BindIndex(ib->renderID);

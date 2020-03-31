@@ -15,7 +15,8 @@ SRC = 	./src/main.c \
 		./src/shaders.c \
 		./src/events.c \
 		./src/render.c \
-		./src/textures.c
+		./src/textures.c \
+		./src/init.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror
