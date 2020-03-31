@@ -55,6 +55,7 @@ static unsigned int CompileShader(unsigned int type, const char* source)
 		type == GL_VERTEX_SHADER ? ft_putstr("vertex ") : ft_putstr("fragment ");
 		ft_putstr("shader compilation failed\n");
 		ft_putstr(message);
+		free(message);
 		glDeleteShader(id);
 		return 0;
 	}
@@ -68,6 +69,8 @@ unsigned int CreateShader()
 	unsigned int program = glCreateProgram();
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	free(vertexShader);
+	free(fragmentShader);
 	glAttachShader(program, vs);
 	glAttachShader(program, fs);
 	glLinkProgram(program);
@@ -81,6 +84,7 @@ unsigned int CreateShader()
 		glGetProgramInfoLog(program, length, &length, message);
 		ft_putendl("link error");
 		ft_putendl(message);
+		free(message);
 	}
 	glValidateProgram(program);
 	glDeleteShader(vs);

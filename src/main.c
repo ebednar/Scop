@@ -20,13 +20,21 @@ void Error(int code)
 		ft_putendl("glwf window creation error");
 	if (code == 3)
 		ft_putendl("can't read file");
+	if (code == 4)
+		ft_putendl("memory allocation failed");
 	exit(code);
 }
 
 int		main(void)
 {
 	GLFWwindow* window;
+	vertexBuf* vb;
+	indexBuf* ib;
 
+	if (!(vb = (vertexBuf *)malloc(sizeof(vertexBuf))))
+		Error(4);
+	if (!(ib = (indexBuf *)malloc(sizeof(indexBuf))))
+		Error(4);
 	/* Initialize the library */
     if (!glfwInit())
         Error(1);
@@ -65,22 +73,18 @@ int		main(void)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), pos, GL_STATIC_DRAW);
+	VertexBuffer(vb, pos, 4 * 2 * sizeof(float));
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 	
-	unsigned int ibo;
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indicies, GL_STATIC_DRAW);
+	IndexBuffer(ib, indicies, 6);
+
+	unsigned int texture = LoadImage("res/textures/wood.bmp");
+	texture = 0;
 
 	unsigned int shader = CreateShader();
 	int location = glGetUniformLocation(shader, "u_Color");
-	
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -99,7 +103,7 @@ int		main(void)
 		glUniform4f(location, r, 1 - r, 0.5f, 1.0f);
 
 		glBindVertexArray(VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		BindIndex(ib->renderID);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0); 
@@ -116,6 +120,8 @@ int		main(void)
         glfwPollEvents();
     }
 	glDeleteProgram(shader);
+	free(vb);
+	free(ib);
     glfwTerminate();
 	return 0;
 }
