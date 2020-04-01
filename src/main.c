@@ -37,7 +37,7 @@ int		main(void)
 		Error(4);
 	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -47,16 +47,18 @@ int		main(void)
 	MakeContext(window);
 	ft_putendl((char *)glGetString(GL_VERSION));
 	float pos[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 1.0f, 0.0f,
-		 0.5f,  0.5f, 1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 1.0f
+		100.5f, 100.5f, 0.0f, 0.0f,
+		200.5f, 100.5f, 1.0f, 0.0f,
+		200.5f, 200.5f, 1.0f, 1.0f,
+		100.5f, 200.5f, 0.0f, 1.0f
 	};
 	unsigned int indicies[] = {
 		0, 1, 2,
 		2, 3, 0
 	};
-
+	float* ortMat = OrtMatrix();
+	float* viewMat = ViewMatrix();
+	float* mvp = MultyplyMat(ortMat, viewMat);
 	unsigned int  VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -71,11 +73,11 @@ int		main(void)
 	IndexBuffer(ib, indicies, 6);
 
 	unsigned int texture = LoadImage("res/textures/stones.bmp");
-	texture = 0;
 
 	unsigned int shader = CreateShader();
 	int location = glGetUniformLocation(shader, "u_Color");
 	int texCoord = glGetUniformLocation(shader, "u_Texture");
+	int ortmatlocation = glGetUniformLocation(shader, "u_MVP");
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -93,9 +95,11 @@ int		main(void)
 		glUseProgram(shader);
 		glUniform4f(location, r, 1 - r, 0.5f, 1.0f);
 		glUniform1i(texCoord, 0);
+		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mvp);
 
 		glBindVertexArray(VAO);
 		BindIndex(ib->renderID);
+		glBindTexture(GL_TEXTURE_2D, texture);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0); 
@@ -112,6 +116,7 @@ int		main(void)
         glfwPollEvents();
     }
 	glDeleteProgram(shader);
+	free(mvp);
 	free(vb);
 	free(ib);
     glfwTerminate();

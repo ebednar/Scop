@@ -13,9 +13,7 @@
 #ifndef SCOP_H
 # define SCOP_H
 # define GL_SILENCE_DEPRECATION
-#include <stdio.h>
-#include <stdlib.h>
-
+# include <stdio.h>
 # include "libft.h"
 # define GLFW_INCLUDE_GLCOREARB
 # include <GLFW/glfw3.h>
@@ -47,5 +45,8 @@ void			BindBuffer(unsigned int renderID);
 void			IndexBuffer(indexBuf* ib, const unsigned int* data, unsigned int count);
 void			BindIndex(unsigned int renderID);
 unsigned int	LoadImage(const char* filePath);
+float*			OrtMatrix();
+float*			ViewMatrix();
+float*			MultyplyMat(float *mat1, float *mat2);
 
 #endif

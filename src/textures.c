@@ -28,8 +28,6 @@ static void		ReadData(image *img, int fd)
 
 	readed = read(fd, buff, img->dataOffset - 54);
 	readed = read(fd, img->data, img->size);
-	printf("%d\n", (unsigned int)img->data[1]);
-	printf("%zd\n", readed);
 }
 
 static int		ApplyTexture(image *img)
@@ -43,7 +41,7 @@ static int		ApplyTexture(image *img)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->width, img->height, 0, GL_BGR, GL_UNSIGNED_BYTE, img->data);
 	glGenerateMipmap(GL_TEXTURE_2D);
-//	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	free(img->data);
 	return texture;
 }
