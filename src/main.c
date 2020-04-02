@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-void Error(int code)
+void		Error(int code)
 {
 	if (code == 1)
 		ft_putendl("glwf init error");
@@ -25,19 +25,33 @@ void Error(int code)
 	exit(code);
 }
 
-int		main(void)
+static void	FreeMem(matrices *mat, unsigned int shader)
 {
-	GLFWwindow* window;
-	vertexBuf* vb;
-	indexBuf* ib;
+	free(mat->modelMat);
+	free(mat->viewMat);
+	free(mat->projMat);
+	free(mat->vp);
+	free(mat->mvp);
+	free(mat);
+	glDeleteProgram(shader);
+}
+
+int			main(void)
+{
+	GLFWwindow	*window;
+	vertexBuf	*vb;
+	indexBuf	*ib;
+	matrices	*mat;
 
 	if (!(vb = (vertexBuf *)malloc(sizeof(vertexBuf))))
 		Error(4);
 	if (!(ib = (indexBuf *)malloc(sizeof(indexBuf))))
 		Error(4);
+	if (!(mat = (matrices *)malloc(sizeof(matrices))))
+		Error(4);
 	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -47,28 +61,27 @@ int		main(void)
 	MakeContext(window);
 	ft_putendl((char *)glGetString(GL_VERSION));
 	float pos[] = {
-		100.5f, 100.5f, 0.0f, 0.0f,
-		200.5f, 100.5f, 1.0f, 0.0f,
-		200.5f, 200.5f, 1.0f, 1.0f,
-		100.5f, 200.5f, 0.0f, 1.0f
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 1.0f
 	};
 	unsigned int indicies[] = {
 		0, 1, 2,
 		2, 3, 0
 	};
-	float* ortMat = OrtMatrix();
-	float* viewMat = ViewMatrix();
-	float* mvp = MultyplyMat(ortMat, viewMat);
+	InitMat(mat);
+	PerspMatrix(mat);
 	unsigned int  VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	VertexBuffer(vb, pos, 4 * 4 * sizeof(float));
+	VertexBuffer(vb, pos, sizeof(pos));
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 4 * sizeof(float), (GLvoid*)(2 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 5 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 
 	IndexBuffer(ib, indicies, 6);
 
@@ -91,15 +104,27 @@ int		main(void)
     {
 		/* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
 		
 		glUseProgram(shader);
 		glUniform4f(location, r, 1 - r, 0.5f, 1.0f);
 		glUniform1i(texCoord, 0);
-		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mvp);
 
 		glBindVertexArray(VAO);
 		BindIndex(ib->renderID);
 		glBindTexture(GL_TEXTURE_2D, texture);
+
+		ViewMatrix(mat, 0.0, 0.0, -10.0);
+		ModelMatrix(mat, 0.0, 0.0, -2.0);
+		MultyplyMat(mat->vp, mat->projMat, mat->viewMat);
+		MultyplyMat(mat->mvp, mat->vp, mat->modelMat);
+		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mat->mvp);
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		ModelMatrix(mat, 1.0, 1.0, 0.0);
+		MultyplyMat(mat->mvp, mat->vp, mat->modelMat);
+		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mat->mvp);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0); 
@@ -115,8 +140,7 @@ int		main(void)
 		glfwSetKeyCallback(window, key_callback);
         glfwPollEvents();
     }
-	glDeleteProgram(shader);
-	free(mvp);
+	FreeMem(mat, shader);
 	free(vb);
 	free(ib);
     glfwTerminate();

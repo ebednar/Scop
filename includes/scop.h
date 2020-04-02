@@ -14,9 +14,14 @@
 # define SCOP_H
 # define GL_SILENCE_DEPRECATION
 # include <stdio.h>
+# include <math.h>
 # include "libft.h"
 # define GLFW_INCLUDE_GLCOREARB
 # include <GLFW/glfw3.h>
+# include "matrix.h"
+
+# define WIDTH 960
+# define HEIGHT 540
 
 typedef struct {
 	unsigned int	renderID;
@@ -45,8 +50,5 @@ void			BindBuffer(unsigned int renderID);
 void			IndexBuffer(indexBuf* ib, const unsigned int* data, unsigned int count);
 void			BindIndex(unsigned int renderID);
 unsigned int	LoadImage(const char* filePath);
-float*			OrtMatrix();
-float*			ViewMatrix();
-float*			MultyplyMat(float *mat1, float *mat2);
 
 #endif
