@@ -17,7 +17,8 @@ SRC = 	./src/main.c \
 		./src/render.c \
 		./src/textures.c \
 		./src/init.c \
-		./src/matrices.c
+		./src/matrices.c \
+		./src/matrix_rotate.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror

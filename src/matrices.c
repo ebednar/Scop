@@ -2,9 +2,11 @@
 
 void	InitMat(matrices *mat)
 {
-	int i;
+	unsigned int i;
+	int j;
+	mat->modelCount = 2;
 
-	if (!(mat->modelMat = (float *)malloc(16 * sizeof(float))))
+	if (!(mat->modelMat = (float **)malloc(mat->modelCount * sizeof(float *))))
 		Error(4);
 	if (!(mat->viewMat = (float *)malloc(16 * sizeof(float))))
 		Error(4);
@@ -14,12 +16,28 @@ void	InitMat(matrices *mat)
 		Error(4);
 	if (!(mat->mvp = (float *)malloc(16 * sizeof(float))))
 		Error(4);
+	if (!(mat->rotMat = (float *)malloc(16 * sizeof(float))))
+		Error(4);
+	i = 0;
+	j = 0;
+	while (i < mat->modelCount)
+	{
+		if (!(mat->modelMat[i] = (float *)malloc(16 * sizeof(float))))
+			Error(4);
+		while (j < 16)
+		{
+			mat->modelMat[i][j] = 0.0f;
+			j++;
+		}
+		j = 0;
+		i++;
+	}
 	i = 0;
 	while (i < 16)
 	{
-		mat->modelMat[i] = 0.0f;
 		mat->viewMat[i] = 0.0f;
 		mat->projMat[i] = 0.0f;
+		mat->rotMat[i] = 0.0f;
 		i++;
 	}
 }
@@ -32,12 +50,11 @@ void	PerspMatrix(matrices *mat)
 	float bottom;
 	float far = 100.0f;
 	float near = 0.1f;
-	float fov = 45.0f;
-	right = near * tanf(fov / 2.0f);
+	float fov = 60.0f;
+	right = near * tanf((fov / 2.0f) * M_PI / 180.0);
 	left = - right;
-	top = left * (float)HEIGHT / (float)WIDTH;
+	top = right * (float)HEIGHT / (float)WIDTH;
 	bottom = - top;
-	printf("%f %f %f %f\n", right, left, top, bottom);
 	float tx = 0.0f;
 	float ty = 0.0f;	
 	float tz = - (2.0f * far * near)/(far - near);
@@ -72,6 +89,11 @@ void	OrtMatrix(matrices *mat)
 
 void	ViewMatrix(matrices *mat, float tx, float ty, float tz)
 {
+	int i;
+
+	i = -1;
+	while (++i < 16)
+		mat->viewMat[i] = 0.0;
 	mat->viewMat[0] = 1.0f;
 	mat->viewMat[3] = tx;
 	mat->viewMat[5] = 1.0f;
@@ -81,19 +103,25 @@ void	ViewMatrix(matrices *mat, float tx, float ty, float tz)
 	mat->viewMat[15] = 1.0f;
 }
 
-void	ModelMatrix(matrices *mat, float tx, float ty, float tz)
+void	TranslateMatrix(float *mat, float tx, float ty, float tz)
 {
-	mat->modelMat[0] = 1.0f;
-	mat->modelMat[3] = tx;
-	mat->modelMat[5] = 1.0f;
-	mat->modelMat[7] = ty;
-	mat->modelMat[10] = 1.0f;
-	mat->modelMat[11] = tz;
-	mat->modelMat[15] = 1.0f;
+	int i;
+
+	i = -1;
+	while (++i < 16)
+		mat[i] = 0.0;
+	mat[0] = 1.0f;
+	mat[3] = tx;
+	mat[5] = 1.0f;
+	mat[7] = ty;
+	mat[10] = 1.0f;
+	mat[11] = tz;
+	mat[15] = 1.0f;
 }
 
 float*	MultyplyMat(float *result, float *mat1, float *mat2)
 {
+	float ptr[16];
 	int i;
 	int j;
 	int k;
@@ -104,12 +132,18 @@ float*	MultyplyMat(float *result, float *mat1, float *mat2)
 	{
 		while (j < 4)
 		{
-			result[k] = mat1[i] * mat2[j] + mat1[i + 1] * mat2[j + 4] + mat1[i + 2] * mat2[j + 8] + mat1[i + 3] * mat2[j + 12];
+			ptr[k] = mat1[i] * mat2[j] + mat1[i + 1] * mat2[j + 4] + mat1[i + 2] * mat2[j + 8] + mat1[i + 3] * mat2[j + 12];
 			j++;
 			k++;
 		}
 		j = 0;
 		i += 4;
+	}
+	i = 0;
+	while (i < 16)
+	{
+		result[i] = ptr[i];
+		i++;
 	}
 	return result;
 }
