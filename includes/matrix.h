@@ -8,6 +8,7 @@ typedef struct {
 	float *vp;
 	float *mvp;
 	float *rotMat;
+	float *lookAt;
 	unsigned int	modelCount;
 } matrices;
 

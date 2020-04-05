@@ -18,6 +18,8 @@ void	InitMat(matrices *mat)
 		Error(4);
 	if (!(mat->rotMat = (float *)malloc(16 * sizeof(float))))
 		Error(4);
+	if (!(mat->lookAt = (float *)malloc(16 * sizeof(float))))
+		Error(4);
 	i = 0;
 	j = 0;
 	while (i < mat->modelCount)
@@ -38,6 +40,7 @@ void	InitMat(matrices *mat)
 		mat->viewMat[i] = 0.0f;
 		mat->projMat[i] = 0.0f;
 		mat->rotMat[i] = 0.0f;
+		mat->lookAt[i] = 0.0f;
 		i++;
 	}
 }

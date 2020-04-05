@@ -25,7 +25,7 @@ void		Error(int code)
 	exit(code);
 }
 
-static void	FreeMem(matrices *mat, unsigned int shader)
+static void	FreeMem(camera* cam, matrices *mat, unsigned int shader)
 {
 	int i;
 
@@ -37,7 +37,14 @@ static void	FreeMem(matrices *mat, unsigned int shader)
 	free(mat->rotMat);
 	free(mat->vp);
 	free(mat->mvp);
+	free(mat->lookAt);
 	free(mat);
+	free(cam->direction);
+	free(cam->front);
+	free(cam->pos);
+	free(cam->up);
+	free(cam->right);
+	free(cam);
 	glDeleteProgram(shader);
 }
 
@@ -47,6 +54,7 @@ int			main(void)
 	vertexBuf	*vb;
 	indexBuf	*ib;
 	matrices	*mat;
+	camera		*cam;
 
 	if (!(vb = (vertexBuf *)malloc(sizeof(vertexBuf))))
 		Error(4);
@@ -54,6 +62,9 @@ int			main(void)
 		Error(4);
 	if (!(mat = (matrices *)malloc(sizeof(matrices))))
 		Error(4);
+	if (!(cam = (camera *)malloc(sizeof(camera))))
+		Error(4);
+	ft_bzero(cam->keys, 1024);
 	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
@@ -64,6 +75,10 @@ int			main(void)
     }
     /* Make the window's context current */
 	MakeContext(window);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetWindowUserPointer(window, cam);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 	glEnable(GL_DEPTH_TEST);
 	ft_putendl((char *)glGetString(GL_VERSION));
 	float pos[] = {
@@ -111,6 +126,7 @@ int			main(void)
 		20, 21, 22,
 		22, 23, 20
 	};
+	Camera_init(cam);
 	InitMat(mat);
 	PerspMatrix(mat);
 	unsigned int  VAO;
@@ -136,10 +152,20 @@ int			main(void)
 	glUseProgram(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		
+	
+	float deltaTime;
+	float oldFrame = 0.0;
+	float currentFrame;
+	cam->lastX = WIDTH / 2;
+	cam->lastY = HEIGHT / 2;
+	cam->yaw = -90.0f;
+	cam->pitch = 0.0f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+		currentFrame = glfwGetTime();
+		deltaTime = currentFrame - oldFrame;
+		oldFrame = currentFrame;
 		/* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
@@ -149,10 +175,10 @@ int			main(void)
 		glBindVertexArray(VAO);
 		BindIndex(ib->renderID);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		ViewMatrix(mat, 0.0, -1.0, -8.0);
+		Camera_(cam, mat);
 
 		TranslateMatrix(mat->modelMat[0], 0.0, 0.0, 0.0);
-		MultyplyMat(mat->vp, mat->projMat, mat->viewMat);
+		MultyplyMat(mat->vp, mat->projMat, mat->lookAt);
 		RotateYMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
 		RotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
 		MultyplyMat(mat->mvp, mat->vp, mat->modelMat[0]);
@@ -160,7 +186,7 @@ int			main(void)
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
-		TranslateMatrix(mat->modelMat[1], 1.0, -1.0, 0.0);
+		TranslateMatrix(mat->modelMat[1], 1.5, -1.0, 0.0);
 		RotateXMatrix(mat->modelMat[1], (float)glfwGetTime() * 80.0f);
 		MultyplyMat(mat->mvp, mat->vp, mat->modelMat[1]);
 		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mat->mvp);
@@ -169,11 +195,11 @@ int			main(void)
 		glBindVertexArray(0); 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+		Do_movement(cam, cam->keys, deltaTime);
         /* Poll for and process events */
-		glfwSetKeyCallback(window, key_callback);
         glfwPollEvents();
     }
-	FreeMem(mat, shader);
+	FreeMem(cam, mat, shader);
 	free(vb);
 	free(ib);
     glfwTerminate();
