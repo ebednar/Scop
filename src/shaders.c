@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-static char* LoadShader(char *filepath)
+static char* loadShader(char *filepath)
 {
 	int fd;
 	char *line;
@@ -21,7 +21,7 @@ static char* LoadShader(char *filepath)
 
 	shader = ft_strnew(0);
 	if ((fd = open(filepath, O_RDONLY)) < 0)
-		Error(3);
+		error(3);
 	while(get_next_line(fd, &line))
 	{
 		if (!(tmp = ft_strjoin(shader, line)))
@@ -38,7 +38,7 @@ static char* LoadShader(char *filepath)
 	return (shader);
 }
 
-static unsigned int CompileShader(unsigned int type, const char* source)
+static unsigned int compileShader(unsigned int type, const char* source)
 {
 	unsigned id = glCreateShader(type);
 	glShaderSource(id, 1, &source, NULL);
@@ -62,13 +62,13 @@ static unsigned int CompileShader(unsigned int type, const char* source)
 	return id;
 }
 
-unsigned int CreateShader()
+unsigned int createShader(char* vertShader, char* fragShader)
 {	
-	char* vertexShader = LoadShader("res/shaders/VertexShader");
-	char* fragmentShader = LoadShader("res/shaders/FragmentShader");
+	char* vertexShader = loadShader(vertShader);
+	char* fragmentShader = loadShader(fragShader);
 	unsigned int program = glCreateProgram();
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
 	free(vertexShader);
 	free(fragmentShader);
 	glAttachShader(program, vs);
@@ -90,4 +90,31 @@ unsigned int CreateShader()
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 	return program;
+}
+
+void	lightUniform(unsigned int shader)
+{
+	glUniform1i(glGetUniformLocation(shader, "u_Texture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "material.diffuse"), 0);
+	glUniform3f(glGetUniformLocation(shader, "material.specular"), 0.5f, 0.5f, 0.5f);
+	glUniform1f(glGetUniformLocation(shader, "material.shininess"), 32.0f);
+	glUniform3f(glGetUniformLocation(shader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+	glUniform3f(glGetUniformLocation(shader, "dirLight.ambient"), 0.01f, 0.01f, 0.01f);
+	glUniform3f(glGetUniformLocation(shader, "dirLight.diffuse"), 0.2f, 0.2f, 0.2f);
+	glUniform3f(glGetUniformLocation(shader, "dirLight.specular"), 0.7f, 0.7f, 0.7f);
+	glUniform1f(glGetUniformLocation(shader, "pointLight.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(shader, "pointLight.linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(shader, "pointLight.quadratic"), 0.032f);
+	glUniform3f(glGetUniformLocation(shader, "pointLight.ambient"), 0.1f, 0.1f, 0.1f);
+	glUniform3f(glGetUniformLocation(shader, "pointLight.diffuse"), 0.7f, 0.7f, 0.7f);
+	glUniform3f(glGetUniformLocation(shader, "pointLight.specular"), 1.0f, 1.0f, 1.0f);
+	glUniform3f(glGetUniformLocation(shader, "pointLight.position"), 5.5f, 1.0f, 1.5f);
+	glUniform1f(glGetUniformLocation(shader, "spotLight.cutoff"), cos(6.5f * M_PI / 180));
+	glUniform1f(glGetUniformLocation(shader, "spotLight.outerCutoff"), cos(12.5f * M_PI / 180));
+	glUniform3f(glGetUniformLocation(shader, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
+	glUniform3f(glGetUniformLocation(shader, "spotLight.diffuse"), 0.7f, 0.7f, 0.7f);
+	glUniform3f(glGetUniformLocation(shader, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+	glUniform1f(glGetUniformLocation(shader, "spotLight.constant"), 1.0f);
+	glUniform1f(glGetUniformLocation(shader, "spotLight.linear"), 0.09f);
+	glUniform1f(glGetUniformLocation(shader, "spotLight.quadratic"), 0.032f);
 }

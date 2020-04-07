@@ -12,7 +12,33 @@
 
 #include "scop.h"
 
-void		Error(int code)
+static void	freeMem(render* rend, matrices *mat)
+{
+	unsigned int i;
+
+	i = -1;
+	while (++i < mat->modelCount)
+		free(mat->modelMat[i]);
+	free(mat->modelMat);
+	free(mat->viewMat);
+	free(mat->projMat);
+	free(mat->rotMat);
+	free(mat->vp);
+	free(mat->mvp);
+	free(mat->lookAt);
+	free(mat);
+	free(rend->cam->direction);
+	free(rend->cam->front);
+	free(rend->cam->pos);
+	free(rend->cam->up);
+	free(rend->cam->right);
+	free(rend->cam);
+	glDeleteProgram(rend->shader.modShader);
+	glDeleteProgram(rend->shader.lightShader);
+	free(rend);
+}
+
+void		error(int code)
 {
 	if (code == 1)
 		ft_putendl("glwf init error");
@@ -22,95 +48,73 @@ void		Error(int code)
 		ft_putendl("can't read file");
 	if (code == 4)
 		ft_putendl("memory allocation failed");
+	glfwTerminate();
 	exit(code);
 }
 
-static void	FreeMem(camera* cam, matrices *mat, unsigned int shader)
+static void unbind()
 {
-	int i;
-
-	i = -1;
-	free(mat->modelMat[0]);
-	free(mat->modelMat);
-	free(mat->viewMat);
-	free(mat->projMat);
-	free(mat->rotMat);
-	free(mat->vp);
-	free(mat->mvp);
-	free(mat->lookAt);
-	free(mat);
-	free(cam->direction);
-	free(cam->front);
-	free(cam->pos);
-	free(cam->up);
-	free(cam->right);
-	free(cam);
-	glDeleteProgram(shader);
+	glBindVertexArray(0);
+	glUseProgram(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 int			main(void)
 {
 	GLFWwindow	*window;
-	vertexBuf	*vb;
-	indexBuf	*ib;
+	render		*rend;
 	matrices	*mat;
-	camera		*cam;
+	model		*mod;
 
-	if (!(vb = (vertexBuf *)malloc(sizeof(vertexBuf))))
-		Error(4);
-	if (!(ib = (indexBuf *)malloc(sizeof(indexBuf))))
-		Error(4);
-	if (!(mat = (matrices *)malloc(sizeof(matrices))))
-		Error(4);
-	if (!(cam = (camera *)malloc(sizeof(camera))))
-		Error(4);
-	ft_bzero(cam->keys, 1024);
 	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        Error(2);
-    }
+    if (!(window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL)))
+        error(2);
     /* Make the window's context current */
-	MakeContext(window);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetWindowUserPointer(window, cam);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glEnable(GL_DEPTH_TEST);
-	ft_putendl((char *)glGetString(GL_VERSION));
+	makeContext(window);
+	if (!(rend = (render *)malloc(sizeof(render))))
+		error(4);
+	if (!(mat = (matrices *)malloc(sizeof(matrices))))
+		error(4);
+	if (!(rend->cam = (camera *)malloc(sizeof(camera))))
+		error(4);
+	if (!(mod = (model *)malloc(sizeof(model))))
+		error(4);
+	glfwSetWindowUserPointer(window, rend);
+	ft_bzero(rend->keys, 1024);
+	int i = -1;
+	while (++i < 3)
+		rend->switchLight[i] = 1.0;
 	float pos[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f,  0.0f, 1.0f,
 
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, -1.0f,  0.0f,  0.0f,
 
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f
 		};
 	unsigned int indicies[] = {
 		0, 1, 2,
@@ -126,40 +130,45 @@ int			main(void)
 		20, 21, 22,
 		22, 23, 20
 	};
-	Camera_init(cam);
-	InitMat(mat);
-	PerspMatrix(mat);
-	unsigned int  VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	rend->texture = loadImage("res/textures/cat.bmp");
+	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
+	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
+	glUseProgram(rend->shader.modShader);
+	lightUniform(rend->shader.modShader);
+	camera_init(rend->cam);
+	initMat(mat);
+	perspMatrix(mat);
 
-	VertexBuffer(vb, pos, sizeof(pos));
+	glGenVertexArrays(1, &rend->vao);
+	glBindVertexArray(rend->vao);
+
+	vertexBuffer(rend, pos, sizeof(pos));
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 5 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (GLvoid*)(5 * sizeof(float)));
 
-	IndexBuffer(ib, indicies, 36);
-
-	unsigned int texture = LoadImage("res/textures/cat.bmp");
-
-	unsigned int shader = CreateShader();
-	int texCoord = glGetUniformLocation(shader, "u_Texture");
-	int ortmatlocation = glGetUniformLocation(shader, "u_MVP");
+	indexBuffer(rend, indicies, 36);
 
 	glBindVertexArray(0);
-	glUseProgram(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	
+
+	glGenVertexArrays(1, &rend->lightvao);
+	glBindVertexArray(rend->lightvao);
+	glBindBuffer(GL_ARRAY_BUFFER, rend->vboID);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+
+	unbind();
+
 	float deltaTime;
 	float oldFrame = 0.0;
 	float currentFrame;
-	cam->lastX = WIDTH / 2;
-	cam->lastY = HEIGHT / 2;
-	cam->yaw = -90.0f;
-	cam->pitch = 0.0f;
+	glfwSetCursorPos(window, rend->cam->lastX, rend->cam->lastY);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -168,40 +177,52 @@ int			main(void)
 		oldFrame = currentFrame;
 		/* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
+		// glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
 		
-		glUseProgram(shader);
-		glUniform1i(texCoord, 0);
-		glBindVertexArray(VAO);
-		BindIndex(ib->renderID);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		Camera_(cam, mat);
+		glUseProgram(rend->shader.modShader);
+		glUniform3f(glGetUniformLocation(rend->shader.modShader, "u_lightSwitch"), rend->switchLight[0], rend->switchLight[1], rend->switchLight[2]);
+		glUniform3f(glGetUniformLocation(rend->shader.modShader, "u_viewPos"), rend->cam->pos[0], rend->cam->pos[1], rend->cam->pos[2]);
+		glUniform3f(glGetUniformLocation(rend->shader.modShader, "spotLight.direction"), rend->cam->front[0], rend->cam->front[1], rend->cam->front[2]);
+		glBindVertexArray(rend->vao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rend->iboID);
+		glBindTexture(GL_TEXTURE_2D, rend->texture);
+		camera_(rend->cam, mat);
 
-		TranslateMatrix(mat->modelMat[0], 0.0, 0.0, 0.0);
-		MultyplyMat(mat->vp, mat->projMat, mat->lookAt);
-		RotateYMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
-		RotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
-		MultyplyMat(mat->mvp, mat->vp, mat->modelMat[0]);
-		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mat->mvp);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_P"), 1, GL_TRUE, mat->projMat);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_V"), 1, GL_TRUE, mat->lookAt);
+		int i = -1;
+		while (++i < 10)
+		{
+			translateMatrix(mat->modelMat[0], 2.0f * (i % 4), 0.0, 2.0f * (i / 3));
+			float angle = 20.0f * i;
+			rotateYMatrix(mat->modelMat[0], angle);
+			angle = 10.0f * i;
+			rotateXMatrix(mat->modelMat[0], angle);
+			 rotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
+			glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat[0]);
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(0);
+
+		glUseProgram(rend->shader.lightShader);
+		glUniform1i(glGetUniformLocation(rend->shader.lightShader, "u_Texture"), 0);
+		glBindVertexArray(rend->lightvao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rend->iboID);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_P"), 1, GL_TRUE, mat->projMat);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_V"), 1, GL_TRUE, mat->lookAt);
+		translateMatrix(mat->modelMat[1], 5.5, 1.0, 1.5);
+		scaleMatrix(mat->modelMat[1], 0.25, 0.25, 0.25);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_M"), 1, GL_TRUE, mat->modelMat[1]);
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-		
-		TranslateMatrix(mat->modelMat[1], 1.5, -1.0, 0.0);
-		RotateXMatrix(mat->modelMat[1], (float)glfwGetTime() * 80.0f);
-		MultyplyMat(mat->mvp, mat->vp, mat->modelMat[1]);
-		glUniformMatrix4fv(ortmatlocation, 1, GL_TRUE, mat->mvp);
-
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0); 
+		unbind();
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-		Do_movement(cam, cam->keys, deltaTime);
+		do_movement(rend, deltaTime);
         /* Poll for and process events */
         glfwPollEvents();
     }
-	FreeMem(cam, mat, shader);
-	free(vb);
-	free(ib);
+	freeMem(rend, mat);
     glfwTerminate();
 	return 0;
 }

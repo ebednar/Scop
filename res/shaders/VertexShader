@@ -2,13 +2,20 @@
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 texCoord;
+layout(location = 2) in vec3 normal;
 
 out vec2 v_texCoord;
+out vec3 v_normal;
+out vec3 v_fragPos;
 
-uniform mat4 u_MVP;
+uniform mat4 u_M;
+uniform mat4 u_V;
+uniform mat4 u_P;
 
 void main()
 {
-	gl_Position = u_MVP * position;
+	gl_Position = u_P * u_V * u_M * position;
 	v_texCoord = texCoord;
+	v_normal = mat3(transpose(inverse(u_M))) * normal;
+	v_fragPos = vec3(u_M * position);
 }

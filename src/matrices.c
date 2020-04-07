@@ -1,31 +1,31 @@
 #include "scop.h"
 
-void	InitMat(matrices *mat)
+void	initMat(matrices *mat)
 {
 	unsigned int i;
 	int j;
 	mat->modelCount = 2;
 
 	if (!(mat->modelMat = (float **)malloc(mat->modelCount * sizeof(float *))))
-		Error(4);
+		error(4);
 	if (!(mat->viewMat = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	if (!(mat->projMat = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	if (!(mat->vp = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	if (!(mat->mvp = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	if (!(mat->rotMat = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	if (!(mat->lookAt = (float *)malloc(16 * sizeof(float))))
-		Error(4);
+		error(4);
 	i = 0;
 	j = 0;
 	while (i < mat->modelCount)
 	{
 		if (!(mat->modelMat[i] = (float *)malloc(16 * sizeof(float))))
-			Error(4);
+			error(4);
 		while (j < 16)
 		{
 			mat->modelMat[i][j] = 0.0f;
@@ -45,7 +45,7 @@ void	InitMat(matrices *mat)
 	}
 }
 
-void	PerspMatrix(matrices *mat)
+void	perspMatrix(matrices *mat)
 {
 	float right;
 	float left;
@@ -70,7 +70,7 @@ void	PerspMatrix(matrices *mat)
 	mat->projMat[14] = - 1.0f;
 }
 
-void	OrtMatrix(matrices *mat)
+void	ortMatrix(matrices *mat)
 {
 	float right = 1.0f;
 	float left = - 1.0f;
@@ -90,7 +90,7 @@ void	OrtMatrix(matrices *mat)
 	mat->projMat[15] = 1.0f;
 }
 
-void	ViewMatrix(matrices *mat, float tx, float ty, float tz)
+void	viewMatrix(matrices *mat, float tx, float ty, float tz)
 {
 	int i;
 
@@ -106,7 +106,7 @@ void	ViewMatrix(matrices *mat, float tx, float ty, float tz)
 	mat->viewMat[15] = 1.0f;
 }
 
-void	TranslateMatrix(float *mat, float tx, float ty, float tz)
+void	translateMatrix(float *mat, float tx, float ty, float tz)
 {
 	int i;
 
@@ -122,7 +122,7 @@ void	TranslateMatrix(float *mat, float tx, float ty, float tz)
 	mat[15] = 1.0f;
 }
 
-float*	MultyplyMat(float *result, float *mat1, float *mat2)
+float*	multyplyMat(float *result, float *mat1, float *mat2)
 {
 	float ptr[16];
 	int i;
@@ -149,4 +149,22 @@ float*	MultyplyMat(float *result, float *mat1, float *mat2)
 		i++;
 	}
 	return result;
+}
+
+void	scaleMatrix(float *mat, float tx, float ty, float tz)
+{
+	int		i;
+	float	ptr[16];
+
+	i = -1;
+	while (++i < 16)
+		ptr[i] = 0.0;
+	ptr[0] = tx;
+	ptr[5] = ty;
+	ptr[10] = tz;
+	ptr[15] = 1.0f;
+	multyplyMat(ptr, mat, ptr);
+	i = -1;
+	while (++i < 16)
+		mat[i] = ptr[i];
 }

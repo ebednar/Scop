@@ -1,6 +1,6 @@
 #include "scop.h"
 
-void	Normalize(float *vec)
+void	normalize(float *vec)
 {
 	float length;
 
@@ -10,38 +10,38 @@ void	Normalize(float *vec)
 	vec[2] = vec[2] / length;
 }
 
-void	Cross(float* vec3, float* vec1, float* vec2)
+void	cross(float* vec3, float* vec1, float* vec2)
 {
 	vec3[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
 	vec3[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
 	vec3[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
 }
 
-void	Camera_init(camera* cam)
+void	camera_init(camera* cam)
 {
-	int i;
-
+	cam->lastX = WIDTH / 2;
+	cam->lastY = HEIGHT / 2;
+	cam->yaw = -90.0f;
+	cam->pitch = 0.0f;
 	if (!(cam->pos = (float *)malloc(3 * sizeof(float ))))
-		Error(4);
+		error(4);
 	if (!(cam->direction = (float *)malloc(3 * sizeof(float ))))
-		Error(4);
+		error(4);
 	if (!(cam->up = (float *)malloc(3 * sizeof(float ))))
-		Error(4);
+		error(4);
 	if (!(cam->right = (float *)malloc(3 * sizeof(float ))))
-		Error(4);
+		error(4);
 	if (!(cam->front = (float *)malloc(3 * sizeof(float ))))
-		Error(4);
-	i = -1;
-	while (++i < 3)
-	{
-		cam->pos[i] = 0.0;
-		cam->front[i] = 0.0;
-	}
+		error(4);
+	cam->pos[0] = 0.0;
+	cam->front[0] = 0.0;
+	cam->pos[1] = 0.0;
+	cam->front[1] = 0.0;
 	cam->pos[2] = 3.0f;
 	cam->front[2] = -1.0f;
 }
 
-void	Camera_(camera* camera, matrices* mat)
+void	camera_(camera* camera, matrices* mat)
 {
 	float up[3] = {0.0, 1.0, 0.0};
 	int i;
@@ -49,11 +49,11 @@ void	Camera_(camera* camera, matrices* mat)
 	i = -1;
 	while (++i < 3)
 		camera->direction[i] = - camera->front[i];
-	Normalize(camera->direction);
-	Cross(camera->right, up, camera->direction);
-	Normalize(camera->right);
-	Cross(camera->up, camera->direction, camera->right);
+	normalize(camera->direction);
+	cross(camera->right, up, camera->direction);
+	normalize(camera->right);
+	cross(camera->up, camera->direction, camera->right);
 	float mat1[16] = {1.0f, 0.0f, 0.0f, -camera->pos[0], 0.0f, 1.0f, 0.0f, -camera->pos[1], 0.0f, 0.0f, 1.0f, -camera->pos[2], 0.0f, 0.0f, 0.0f, 1.0f};
 	float mat2[16] = {camera->right[0], camera->right[1], camera->right[2], 0.0, camera->up[0], camera->up[1], camera->up[2], 0.0f, camera->direction[0], camera->direction[1], camera->direction[2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-	MultyplyMat(mat->lookAt, mat2, mat1);
+	multyplyMat(mat->lookAt, mat2, mat1);
 	}

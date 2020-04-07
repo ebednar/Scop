@@ -14,15 +14,21 @@
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	camera* cam = glfwGetWindowUserPointer(window);
+	render* rend = glfwGetWindowUserPointer(window);
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, GL_TRUE);
+	if(key == GLFW_KEY_1 && action == GLFW_PRESS)
+		rend->switchLight[0] *= -1;
+	if(key == GLFW_KEY_2 && action == GLFW_PRESS)
+		rend->switchLight[1] *= -1;
+	if(key == GLFW_KEY_3 && action == GLFW_PRESS)
+		rend->switchLight[2] *= -1;
 	if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            cam->keys[key] = 1;
+            rend->keys[key] = 1;
         else if (action == GLFW_RELEASE)
-            cam->keys[key] = 0;
+            rend->keys[key] = 0;
     }
 	scancode = 0;
 	mode = 0;
@@ -30,61 +36,60 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	camera* cam = glfwGetWindowUserPointer(window);
-	GLfloat xoffset = xpos - cam->lastX;
-    GLfloat yoffset = cam->lastY - ypos; 
-    cam->lastX = xpos;
-    cam->lastY = ypos;
+	render* rend = glfwGetWindowUserPointer(window);
+	GLfloat xoffset = xpos - rend->cam->lastX;
+    GLfloat yoffset = rend->cam->lastY - ypos; 
+    rend->cam->lastX = xpos;
+    rend->cam->lastY = ypos;
 
     GLfloat sensitivity = 0.05;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    cam->yaw   += xoffset;
-    cam->pitch += yoffset;
+    rend->cam->yaw   += xoffset;
+    rend->cam->pitch += yoffset;
 
-    if(cam->pitch > 89.0f)
-        cam->pitch = 89.0f;
-    if(cam->pitch < -89.0f)
-        cam->pitch = -89.0f;
+    if(rend->cam->pitch > 89.0f)
+        rend->cam->pitch = 89.0f;
+    if(rend->cam->pitch < -89.0f)
+        rend->cam->pitch = -89.0f;
 
-    cam->front[0] = cos(cam->yaw * M_PI / 180) * cos(cam->pitch * M_PI / 180);
-    cam->front[1] = sin(cam->pitch * M_PI / 180);
-    cam->front[2] = sin(cam->yaw * M_PI / 180) * cos(cam->pitch * M_PI / 180);
-    Normalize(cam->front);
+    rend->cam->front[0] = cos(rend->cam->yaw * M_PI / 180) * cos(rend->cam->pitch * M_PI / 180);
+    rend->cam->front[1] = sin(rend->cam->pitch * M_PI / 180);
+    rend->cam->front[2] = sin(rend->cam->yaw * M_PI / 180) * cos(rend->cam->pitch * M_PI / 180);
+    normalize(rend->cam->front);
 }
 
-void Do_movement(camera* cam, char* keys, float delta)
+void do_movement(render* rend, float delta)
 {
-    // Camera controls
     float cameraSpeed = 1.5f * delta;
 	float vec[3];
-    if (keys[GLFW_KEY_W])
+    if (rend->keys[GLFW_KEY_W])
 	{
-        cam->pos[0] += cameraSpeed * cam->front[0];
-		cam->pos[1] += cameraSpeed * cam->front[1];
-		cam->pos[2] += cameraSpeed * cam->front[2];
+        rend->cam->pos[0] += cameraSpeed * rend->cam->front[0];
+		rend->cam->pos[1] += cameraSpeed * rend->cam->front[1];
+		rend->cam->pos[2] += cameraSpeed * rend->cam->front[2];
 	}
-    if (keys[GLFW_KEY_S])
+    if (rend->keys[GLFW_KEY_S])
 	{
-        cam->pos[0] -= cameraSpeed * cam->front[0];
-		cam->pos[1] -= cameraSpeed * cam->front[1];
-		cam->pos[2] -= cameraSpeed * cam->front[2];
+        rend->cam->pos[0] -= cameraSpeed * rend->cam->front[0];
+		rend->cam->pos[1] -= cameraSpeed * rend->cam->front[1];
+		rend->cam->pos[2] -= cameraSpeed * rend->cam->front[2];
 	}    
-	if (keys[GLFW_KEY_A])
+	if (rend->keys[GLFW_KEY_A])
 	{
-		Cross(vec, cam->front, cam->up);
-		Normalize(vec);
-		cam->pos[0] -= cameraSpeed * vec[0];
-		cam->pos[1] -= cameraSpeed * vec[1];
-		cam->pos[2] -= cameraSpeed * vec[2];
+		cross(vec, rend->cam->front, rend->cam->up);
+		normalize(vec);
+		rend->cam->pos[0] -= cameraSpeed * vec[0];
+		rend->cam->pos[1] -= cameraSpeed * vec[1];
+		rend->cam->pos[2] -= cameraSpeed * vec[2];
 	}
-    if (keys[GLFW_KEY_D])
+    if (rend->keys[GLFW_KEY_D])
 	{
-        Cross(vec, cam->front, cam->up);
-		Normalize(vec);
-		cam->pos[0] += cameraSpeed * vec[0];
-		cam->pos[1] += cameraSpeed * vec[1];
-		cam->pos[2] += cameraSpeed * vec[2];
+        cross(vec, rend->cam->front, rend->cam->up);
+		normalize(vec);
+		rend->cam->pos[0] += cameraSpeed * vec[0];
+		rend->cam->pos[1] += cameraSpeed * vec[1];
+		rend->cam->pos[2] += cameraSpeed * vec[2];
 	}
 }

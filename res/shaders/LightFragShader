@@ -1,0 +1,13 @@
+#version 330 core
+
+out vec3 color;
+
+in vec2 v_texCoord;
+
+uniform sampler2D u_Texture;
+
+void main()
+{
+	vec3 texColor = texture(u_Texture, v_texCoord).rgb;
+	color = texColor;
+}

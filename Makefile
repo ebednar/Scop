@@ -23,7 +23,7 @@ SRC = 	./src/main.c \
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror
-INCLUDES = -I includes -I libft -I GLFW/include -I GLEW/include
+INCLUDES = -I includes -I libft -I GLFW/include
 FRAMEWORKS = -framework OpenGL -framework Cocoa -framework IOKit
 LIBGLFW = ./GLFW/lib-macos/libglfw3.a
 all: $(NAME)
