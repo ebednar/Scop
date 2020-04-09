@@ -24,3 +24,20 @@ void	makeContext(GLFWwindow* window)
 	glEnable(GL_DEPTH_TEST);
 	ft_putendl((char *)glGetString(GL_VERSION));
 }
+
+void	initBaseData(GLFWwindow* window, render* rend, matrices* mat)
+{
+		glfwSetWindowUserPointer(window, rend);
+	ft_bzero(rend->keys, 1024);
+	int i = -1;
+	while (++i < 3)
+		rend->switchLight[i] = 1.0;
+	rend->texture = loadImage("res/textures/cat.bmp");
+	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
+	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
+	glUseProgram(rend->shader.modShader);
+	lightUniform(rend->shader.modShader);
+	camera_init(rend->cam);
+	initMat(mat);
+	perspMatrix(mat);
+}

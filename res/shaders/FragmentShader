@@ -107,9 +107,9 @@ void main()
 {
 	vec3 norm = normalize(v_normal);
 	vec3 viewDir = normalize(u_viewPos - v_fragPos);
-	vec3 result = vec3(0.0f, 0.0f, 0.0f);
+	vec3 result = vec3(0.5f, 0.4f, 1.0f) + norm;
 	if (u_lightSwitch.x == 1.0f)
-		result += CalcDirLight(dirLight, norm, viewDir);
+		result = CalcDirLight(dirLight, norm, viewDir);
 	if (u_lightSwitch.y == 1.0f)
 		result += CalcPointLight(pointLight, norm, v_fragPos, viewDir);
 	if (u_lightSwitch.z == 1.0f)

@@ -80,7 +80,9 @@ unsigned int createShader(char* vertShader, char* fragShader)
 	{
 		int length;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)malloc(sizeof(char) * length + 1);
+		char* message;
+		if (!(message = (char*)malloc(sizeof(char) * length + 1)))
+			error(4);
 		glGetProgramInfoLog(program, length, &length, message);
 		ft_putendl("link error");
 		ft_putendl(message);
@@ -99,7 +101,7 @@ void	lightUniform(unsigned int shader)
 	glUniform3f(glGetUniformLocation(shader, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(shader, "material.shininess"), 32.0f);
 	glUniform3f(glGetUniformLocation(shader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-	glUniform3f(glGetUniformLocation(shader, "dirLight.ambient"), 0.01f, 0.01f, 0.01f);
+	glUniform3f(glGetUniformLocation(shader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
 	glUniform3f(glGetUniformLocation(shader, "dirLight.diffuse"), 0.2f, 0.2f, 0.2f);
 	glUniform3f(glGetUniformLocation(shader, "dirLight.specular"), 0.7f, 0.7f, 0.7f);
 	glUniform1f(glGetUniformLocation(shader, "pointLight.constant"), 1.0f);
@@ -112,7 +114,7 @@ void	lightUniform(unsigned int shader)
 	glUniform1f(glGetUniformLocation(shader, "spotLight.cutoff"), cos(6.5f * M_PI / 180));
 	glUniform1f(glGetUniformLocation(shader, "spotLight.outerCutoff"), cos(12.5f * M_PI / 180));
 	glUniform3f(glGetUniformLocation(shader, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
-	glUniform3f(glGetUniformLocation(shader, "spotLight.diffuse"), 0.7f, 0.7f, 0.7f);
+	glUniform3f(glGetUniformLocation(shader, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
 	glUniform3f(glGetUniformLocation(shader, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
 	glUniform1f(glGetUniformLocation(shader, "spotLight.constant"), 1.0f);
 	glUniform1f(glGetUniformLocation(shader, "spotLight.linear"), 0.09f);

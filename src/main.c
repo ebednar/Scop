@@ -48,6 +48,8 @@ void		error(int code)
 		ft_putendl("can't read file");
 	if (code == 4)
 		ft_putendl("memory allocation failed");
+	if (code == 5)
+		ft_putendl("Usage: ./scop [.obj file name]");
 	glfwTerminate();
 	exit(code);
 }
@@ -59,13 +61,15 @@ static void unbind()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-int			main(void)
+int			main(int argc, char **argv)
 {
 	GLFWwindow	*window;
 	render		*rend;
 	matrices	*mat;
 	model		*mod;
 
+	if (argc != 2)
+		/*error(5)*/;
 	initGLFW();
     /* Create a windowed mode window and its OpenGL context */
     if (!(window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL)))
@@ -80,78 +84,23 @@ int			main(void)
 		error(4);
 	if (!(mod = (model *)malloc(sizeof(model))))
 		error(4);
-	glfwSetWindowUserPointer(window, rend);
-	ft_bzero(rend->keys, 1024);
-	int i = -1;
-	while (++i < 3)
-		rend->switchLight[i] = 1.0;
-	float pos[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f,  0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  0.0f, -1.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,  0.0f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, -1.0f,  0.0f,  0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  1.0f,  0.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  1.0f,  0.0f,  0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  0.0f, -1.0f,  0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  1.0f,  0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,  0.0f,  1.0f,  0.0f
-		};
-	unsigned int indicies[] = {
-		0, 1, 2,
-		2, 3, 0,
-		4, 5, 6,
-		6, 7, 4,
-		8, 9, 10,
-		10, 11, 8,
-		12, 13, 14,
-		14, 15, 12,
-		16, 17, 18,
-		18, 19, 16,
-		20, 21, 22,
-		22, 23, 20
-	};
-	rend->texture = loadImage("res/textures/cat.bmp");
-	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
-	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
-	glUseProgram(rend->shader.modShader);
-	lightUniform(rend->shader.modShader);
-	camera_init(rend->cam);
-	initMat(mat);
-	perspMatrix(mat);
+	initBaseData(window, rend, mat);
+	
+	loadModel(mod, argv[1]);
 
 	glGenVertexArrays(1, &rend->vao);
 	glBindVertexArray(rend->vao);
 
-	vertexBuffer(rend, pos, sizeof(pos));
+	vertexBuffer(rend, mod->verticies, mod->vCount * 8 * sizeof(float));
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT,GL_FALSE, 8 * sizeof(float), (GLvoid*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(5 * sizeof(float)));
 
-	indexBuffer(rend, indicies, 36);
+	indexBuffer(rend, mod->indicies, mod->iCount * 3);
 
 	glBindVertexArray(0);
 
@@ -177,8 +126,8 @@ int			main(void)
 		oldFrame = currentFrame;
 		/* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// glClearColor(0.1f, 0.2f, 0.4f, 1.0f);
-		
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
 		glUseProgram(rend->shader.modShader);
 		glUniform3f(glGetUniformLocation(rend->shader.modShader, "u_lightSwitch"), rend->switchLight[0], rend->switchLight[1], rend->switchLight[2]);
 		glUniform3f(glGetUniformLocation(rend->shader.modShader, "u_viewPos"), rend->cam->pos[0], rend->cam->pos[1], rend->cam->pos[2]);
@@ -190,21 +139,27 @@ int			main(void)
 
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_P"), 1, GL_TRUE, mat->projMat);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_V"), 1, GL_TRUE, mat->lookAt);
-		int i = -1;
+
+		translateMatrix(mat->modelMat[0], 0.0f, 0.0f, 0.0f);
+		rotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
+		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat[0]);
+		glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
+
+		/*int i = -1;
 		while (++i < 10)
 		{
-			translateMatrix(mat->modelMat[0], 2.0f * (i % 4), 0.0, 2.0f * (i / 3));
+			translateMatrix(mat->modelMat[0], 2.0f * (i % 4), 0.0f, 2.0f * (i / 3));
 			float angle = 20.0f * i;
 			rotateYMatrix(mat->modelMat[0], angle);
 			angle = 10.0f * i;
 			rotateXMatrix(mat->modelMat[0], angle);
-			 rotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
+			rotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
 			glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat[0]);
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-		}
+		}*/
 		glBindVertexArray(0);
 
-		glUseProgram(rend->shader.lightShader);
+		/*glUseProgram(rend->shader.lightShader);
 		glUniform1i(glGetUniformLocation(rend->shader.lightShader, "u_Texture"), 0);
 		glBindVertexArray(rend->lightvao);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rend->iboID);
@@ -214,7 +169,7 @@ int			main(void)
 		scaleMatrix(mat->modelMat[1], 0.25, 0.25, 0.25);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_M"), 1, GL_TRUE, mat->modelMat[1]);
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);*/
 		unbind();
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
