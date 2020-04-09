@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 texCoord;
@@ -11,11 +11,14 @@ out vec3 v_fragPos;
 uniform mat4 u_M;
 uniform mat4 u_V;
 uniform mat4 u_P;
+uniform int  u_isText;
 
 void main()
 {
 	gl_Position = u_P * u_V * u_M * position;
 	v_texCoord = texCoord;
+	if (u_isText == 0)
+		v_texCoord = vec2(position.z * 2, position.y * 2);
 	v_normal = mat3(transpose(inverse(u_M))) * normal;
 	v_fragPos = vec3(u_M * position);
 }

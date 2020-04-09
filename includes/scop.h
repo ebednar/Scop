@@ -66,13 +66,13 @@ typedef struct {
 	int		vCount;
 	unsigned int*	indicies;
 	int		iCount;
-	float	pos[3];
+	int		isTexture;
 } model;
 
 void			initGLFW();
 void			makeContext(GLFWwindow* window);
 void			error(int code);
-void			initBaseData(GLFWwindow* window, render* rend, matrices* mat);
+void			initBaseData(GLFWwindow* window, render* rend, matrices* mat, model* mod);
 unsigned int	createShader(char* vertShader, char* fragShader);
 void			key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void			mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -85,9 +85,9 @@ void			camera_init(camera* camera);
 void			normalize(float *vec);
 void			cross(float* vec3, float* vec1, float* vec2);
 void			do_movement(render* rend, float delta);
-void			lightUniform(unsigned int shader);
+void			lightUniform(unsigned int shader, model* mod);
 void			loadModel(model* mod, char* path);
-void			fillTexture(float** modData, unsigned int** indData, int vCount, int iCount);
-void			fillNormal(float** modData, int vCount);
+void			fillTexture(float** modData, int vCount);
+void			fillNormal(float** modData, unsigned int** indData, int iCount);
 
 #endif

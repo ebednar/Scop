@@ -81,7 +81,7 @@ static void	readFloat(float* data, char* line, int offset)
 	}
 }
 
-static void readVert(float** modData, unsigned int** indData, char* path, int vCount, int iCount)
+static void readVert(float** modData, unsigned int** indData, char* path, model* mod)
 {
 	char*	line;
 	int		fd;
@@ -90,7 +90,6 @@ static void readVert(float** modData, unsigned int** indData, char* path, int vC
 
 	if ((fd = open(path, O_RDONLY)) < 0)
 		error(3);
-	i = iCount;
 	i = -1;
 	while (++i < 4)
 		vert[i] = 0;
@@ -106,10 +105,13 @@ static void readVert(float** modData, unsigned int** indData, char* path, int vC
 			readInt(indData, &(vert[3]), line);
 		free(line);
 	}
-	 if (vert[1] == 0)
-	 	fillTexture(modData, indData, vCount, iCount);
-	 if (vert[2] == 0)
-	 	fillNormal(modData, vCount);
+	if (vert[1] == 0)
+	{
+		mod->isTexture = 0;
+		fillTexture(modData, mod->vCount);
+	}
+	if (vert[2] == 0)
+	 	fillNormal(modData, indData, mod->iCount);
 	close(fd);
 }
 
@@ -156,8 +158,7 @@ void		loadModel(model* mod, char* path)
 	while (++i < mod->iCount)
 		if (!(indData[i] = (unsigned int *)malloc(3 * sizeof(unsigned int))))
 			error(4);
-	printf("check\n");
-	readVert(modData, indData, path, mod->vCount, mod->iCount);
+	readVert(modData, indData, path, mod);
 	if (!(mod->verticies = (float *)malloc((8 * mod->vCount) * sizeof(float))))
 			error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->iCount) * sizeof(unsigned int))))
@@ -186,15 +187,4 @@ void		loadModel(model* mod, char* path)
 		free(indData[i]);
 	free(modData);
 	free(indData);
-
-	i = 0;
-	printf("start\n");
-	while (i < mod->iCount * 3)
-	{
-		printf ("%u ", mod->indicies[i]);
-		i++;
-		if (i % 3 == 0)
-			printf ("\n");
-	}
-	printf("end\n");
 }

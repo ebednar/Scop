@@ -94,9 +94,10 @@ unsigned int createShader(char* vertShader, char* fragShader)
 	return program;
 }
 
-void	lightUniform(unsigned int shader)
+void	lightUniform(unsigned int shader, model* mod)
 {
 	glUniform1i(glGetUniformLocation(shader, "u_Texture"), 0);
+	glUniform1i(glGetUniformLocation(shader, "u_isText"), mod->isTexture);
 	glUniform1i(glGetUniformLocation(shader, "material.diffuse"), 0);
 	glUniform3f(glGetUniformLocation(shader, "material.specular"), 0.5f, 0.5f, 0.5f);
 	glUniform1f(glGetUniformLocation(shader, "material.shininess"), 32.0f);

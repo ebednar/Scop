@@ -84,9 +84,9 @@ int			main(int argc, char **argv)
 		error(4);
 	if (!(mod = (model *)malloc(sizeof(model))))
 		error(4);
-	initBaseData(window, rend, mat);
-	
+	mod->isTexture = 1;
 	loadModel(mod, argv[1]);
+	initBaseData(window, rend, mat, mod);
 
 	glGenVertexArrays(1, &rend->vao);
 	glBindVertexArray(rend->vao);
@@ -141,7 +141,6 @@ int			main(int argc, char **argv)
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_V"), 1, GL_TRUE, mat->lookAt);
 
 		translateMatrix(mat->modelMat[0], 0.0f, 0.0f, 0.0f);
-		rotateZMatrix(mat->modelMat[0], (float)glfwGetTime() * 40.0f);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat[0]);
 		glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
 
@@ -159,17 +158,17 @@ int			main(int argc, char **argv)
 		}*/
 		glBindVertexArray(0);
 
-		/*glUseProgram(rend->shader.lightShader);
+		glUseProgram(rend->shader.lightShader);
 		glUniform1i(glGetUniformLocation(rend->shader.lightShader, "u_Texture"), 0);
 		glBindVertexArray(rend->lightvao);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rend->iboID);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_P"), 1, GL_TRUE, mat->projMat);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_V"), 1, GL_TRUE, mat->lookAt);
-		translateMatrix(mat->modelMat[1], 5.5, 1.0, 1.5);
+		translateMatrix(mat->modelMat[1], 2.5, 1.0, 1.5);
 		scaleMatrix(mat->modelMat[1], 0.25, 0.25, 0.25);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_M"), 1, GL_TRUE, mat->modelMat[1]);
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);*/
+		glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
 		unbind();
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
