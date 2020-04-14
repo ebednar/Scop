@@ -2,7 +2,6 @@
 
 void	initGLFW()
 {
-	/* Initialize the library */
     if (!glfwInit())
         error(1);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -11,27 +10,41 @@ void	initGLFW()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-void	makeContext(GLFWwindow* window)
+void	makeContext(render* rend)
 {
-	glfwMakeContextCurrent(window);
+	if (!(rend->window = glfwCreateWindow(WIDTH, HEIGHT, "Scop", NULL, NULL)))
+        error(2);
+	glfwMakeContextCurrent(rend->window);
 	glfwSwapInterval(1);
 	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
+	glfwGetFramebufferSize(rend->window, &width, &height);
 	glViewport(0, 0, width, height);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(rend->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetWindowUserPointer(rend->window, rend);
+	glfwSetKeyCallback(rend->window, key_callback);
+	glfwSetCursorPosCallback(rend->window, mouse_callback);
+	if (!(rend->cam = (camera *)malloc(sizeof(camera))))
+		error(4);
+	glfwSetCursorPos(rend->window, rend->cam->lastX, rend->cam->lastY);
 	glEnable(GL_DEPTH_TEST);
 	ft_putendl((char *)glGetString(GL_VERSION));
 }
 
-void	initBaseData(GLFWwindow* window, render* rend, matrices* mat, model* mod)
+void	initBaseData(render* rend, matrices* mat, model* mod)
 {
-		glfwSetWindowUserPointer(window, rend);
+	rend->oldFrame = 0.0f;
+	rend->x = 0.0f;
+	rend->y = 0.0f;
+	rend->z = 0.0f;
+	rend->angX = 0.0f;
+	rend->angY = 0.0f;
+	rend->angZ = 0.0f;
+	rend->state = 0;
+	rend->wire = -1;
 	ft_bzero(rend->keys, 1024);
 	int i = -1;
 	while (++i < 3)
-		rend->switchLight[i] = 1.0;
+		rend->lightSwitch[i] = -1.0f;
 	rend->texture = loadImage("res/textures/cat.bmp");
 	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
 	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");

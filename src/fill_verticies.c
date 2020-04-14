@@ -1,16 +1,28 @@
 #include "scop.h"
 
-void	fillTexture(float** modData, int vCount)
+void	fillTexture(float** modData, model* mod)
 {
 	int i;
 
-	ft_putendl("no texture\n");
-	i = vCount;
+	mod->isTexture = 0;
 	i = 0;
-	while (i < vCount)
+	while (i < mod->vCount)
 	{
-		modData[i][3] = 0.0;
-		modData[i][4] = 0.0;
+		if (i % 3 == 0)
+		{
+			modData[i][3] = 0.9f;
+			modData[i][4] = 0.1f;
+		}
+		else if (i % 3 == 1)
+		{
+			modData[i][3] = 0.1f;
+			modData[i][4] = 0.9f;
+		}
+		else if (i % 3 == 2)
+		{
+			modData[i][3] = 0.02f;
+			modData[i][4] = 0.02f;
+		}
 		i ++;
 	}
 }
@@ -42,4 +54,43 @@ void	fillNormal(float** modData, unsigned int** indData, int iCount)
 		modData[indData[i][1]][7] = norm[2];
 		modData[indData[i][2]][7] = norm[2];
 	}
+}
+
+static void	freeData(model* mod, float** modData, unsigned int** indData)
+{
+	int i;
+
+	i = -1;
+	while (++i < mod->vCount)
+		free(modData[i]);
+	i = -1;
+	while (++i < mod->iCount)
+		free(indData[i]);
+	free(modData);
+	free(indData);
+}
+
+void	fillVerticies(model* mod, float** modData, unsigned int** indData)
+{
+	int i;
+	int j;
+	int k;
+
+	i = -1;
+	k = -1;
+	while (++i < mod->vCount)
+	{
+		j = -1;
+		while (++j < 8)
+			mod->verticies[++k] =  modData[i][j];
+	}
+	i = -1;
+	k = -1;
+	while (++i < mod->iCount)
+	{
+		j = -1;
+		while (++j < 3)
+			mod->indicies[++k] =  indData[i][j];
+	}
+	freeData(mod, modData, indData);
 }

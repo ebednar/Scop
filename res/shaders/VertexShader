@@ -4,14 +4,15 @@ layout(location = 0) in vec4 position;
 layout(location = 1) in vec2 texCoord;
 layout(location = 2) in vec3 normal;
 
-out vec2 v_texCoord;
-out vec3 v_normal;
-out vec3 v_fragPos;
+out vec2 		v_texCoord;
+out vec3		v_normal;
+out vec3		v_fragPos;
+flat out vec3	v_color;
 
-uniform mat4 u_M;
-uniform mat4 u_V;
-uniform mat4 u_P;
-uniform int  u_isText;
+uniform mat4	u_M;
+uniform mat4	u_V;
+uniform mat4	u_P;
+uniform int 	u_isText;
 
 void main()
 {
@@ -21,4 +22,10 @@ void main()
 		v_texCoord = vec2(position.z * 2, position.y * 2);
 	v_normal = mat3(transpose(inverse(u_M))) * normal;
 	v_fragPos = vec3(u_M * position);
+	float blue;
+	if (texCoord == vec2(0.02f, 0.02f))
+		blue = 0.9f;
+	else
+		blue = 0.5f;
+	v_color = vec3(texCoord,blue);
 }

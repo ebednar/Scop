@@ -1,30 +1,6 @@
 #include "scop.h"
 
-void	rotateMatrix(float *mat, float a, float b, float c)
-{
-	float ptr[16];
-	int		i;
-
-	i = -1;
-	while (++i < 16)
-		ptr[i] = 0.0;
-	a = a * M_PI / 180.0;
-	b = b * M_PI / 180.0;
-	c = c * M_PI / 180.0;
-	ptr[0] = 1;
-	ptr[5] = cos(a);
-	ptr[6] = -sin(a);
-	ptr[9] = sin(a);
-	ptr[10] = cos(a);
-	ptr[15] = 1;
-	multyplyMat(ptr, mat, ptr);
-	i = -1;
-	while (++i < 16)
-		mat[i] = ptr[i];
-}
-
-
-void	rotateXMatrix(float *mat, float angle)
+static void	rotateXMatrix(float *mat, float angle)
 {
 	float ptr[16];
 	int		i;
@@ -45,7 +21,7 @@ void	rotateXMatrix(float *mat, float angle)
 		mat[i] = ptr[i];
 }
 
-void	rotateYMatrix(float *mat, float angle)
+static void	rotateYMatrix(float *mat, float angle)
 {
 	float ptr[16];
 	int		i;
@@ -66,7 +42,7 @@ void	rotateYMatrix(float *mat, float angle)
 		mat[i] = ptr[i];
 }
 
-void	rotateZMatrix(float *mat, float angle)
+static void	rotateZMatrix(float *mat, float angle)
 {
 	float ptr[16];
 	int		i;
@@ -85,4 +61,11 @@ void	rotateZMatrix(float *mat, float angle)
 	i = -1;
 	while (++i < 16)
 		mat[i] = ptr[i];
+}
+
+void	rotateMatrix(float *mat, float a, float b, float c)
+{
+	rotateXMatrix(mat, a);
+	rotateYMatrix(mat, b);
+	rotateZMatrix(mat, c);
 }

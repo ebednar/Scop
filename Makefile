@@ -21,7 +21,9 @@ SRC = 	./src/main.c \
 		./src/matrix_rotate.c \
 		./src/camera.c \
 		./src/model.c \
-		./src/fill_verticies.c
+		./src/read_indicies.c \
+		./src/fill_verticies.c \
+		./src/draw.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror

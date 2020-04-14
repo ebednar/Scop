@@ -1,39 +1,5 @@
 #include "scop.h"
 
-static void	readInt(unsigned int** data, int* numb, char* line)
-{
-	char*	ptr1;
-	int	i;
-	int	count;
-	int	ind[4];
-
-	i = -1;
-	count = 0;
-	ptr1 = line + 1;
-	while (*ptr1 != '\0')
-	{
-		if (*ptr1 >= '0' && *ptr1 <= '9')
-		{
-			ind[count] = ft_atoi(ptr1) - 1;
-			while (*ptr1 >= '0' && *ptr1 <= '9')
-				ptr1++;
-			count++;
-		}
-		else
-			ptr1++;
-	}
-	while (++i < 3)
-		data[*numb][i] = ind[i];
-	(*numb)++;
-	if (count == 4)
-	{
-		data[*numb][0] = ind[2];
-		data[*numb][1] = ind[3];
-		data[*numb][2] = ind[0];
-		(*numb)++;
-	}
-}
-
 static void	checkIndecies(model* mod, char* line)
 {
 	char*	ptr1;
@@ -45,7 +11,7 @@ static void	checkIndecies(model* mod, char* line)
 	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')
 		{
-			while (*ptr1 >= '0' && *ptr1 <= '9')
+			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
 			{
 				ptr1++;
 			}
@@ -106,10 +72,7 @@ static void readVert(float** modData, unsigned int** indData, char* path, model*
 		free(line);
 	}
 	if (vert[1] == 0)
-	{
-		mod->isTexture = 0;
-		fillTexture(modData, mod->vCount);
-	}
+		fillTexture(modData, mod);
 	if (vert[2] == 0)
 	 	fillNormal(modData, indData, mod->iCount);
 	close(fd);
@@ -120,6 +83,7 @@ static void	vertCount(model* mod, char* path)
 	int		fd;
 	char*	line;
 
+	mod->isTexture = 1;
 	mod->vCount = 0;
 	mod->iCount = 0;
 	if ((fd = open(path, O_RDONLY)) < 0)
@@ -142,8 +106,6 @@ void		loadModel(model* mod, char* path)
 	float**	modData;
 	unsigned int**	indData;
 	int i;
-	int j;
-	int k;
 
 	vertCount(mod, path);
 	if (!(modData = (float **)malloc(mod->vCount * sizeof(float *))))
@@ -163,28 +125,5 @@ void		loadModel(model* mod, char* path)
 			error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->iCount) * sizeof(unsigned int))))
 			error(4);
-	i = -1;
-	k = -1;
-	while (++i < mod->vCount)
-	{
-		j = -1;
-		while (++j < 8)
-			mod->verticies[++k] =  modData[i][j];
-	}
-	i = -1;
-	k = -1;
-	while (++i < mod->iCount)
-	{
-		j = -1;
-		while (++j < 3)
-			mod->indicies[++k] =  indData[i][j];
-	}
-	i = -1;
-	while (++i < mod->vCount)
-		free(modData[i]);
-	i = -1;
-	while (++i < mod->iCount)
-		free(indData[i]);
-	free(modData);
-	free(indData);
+	fillVerticies(mod, modData, indData);
 }

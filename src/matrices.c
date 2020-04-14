@@ -3,10 +3,8 @@
 void	initMat(matrices *mat)
 {
 	unsigned int i;
-	int j;
-	mat->modelCount = 2;
 
-	if (!(mat->modelMat = (float **)malloc(mat->modelCount * sizeof(float *))))
+	if (!(mat->modelMat = (float *)malloc(16 * sizeof(float))))
 		error(4);
 	if (!(mat->viewMat = (float *)malloc(16 * sizeof(float))))
 		error(4);
@@ -20,28 +18,14 @@ void	initMat(matrices *mat)
 		error(4);
 	if (!(mat->lookAt = (float *)malloc(16 * sizeof(float))))
 		error(4);
-	i = 0;
-	j = 0;
-	while (i < mat->modelCount)
+	i = -1;
+	while (++i < 16)
 	{
-		if (!(mat->modelMat[i] = (float *)malloc(16 * sizeof(float))))
-			error(4);
-		while (j < 16)
-		{
-			mat->modelMat[i][j] = 0.0f;
-			j++;
-		}
-		j = 0;
-		i++;
-	}
-	i = 0;
-	while (i < 16)
-	{
+		mat->modelMat[i] = 0.0f;
 		mat->viewMat[i] = 0.0f;
 		mat->projMat[i] = 0.0f;
 		mat->rotMat[i] = 0.0f;
 		mat->lookAt[i] = 0.0f;
-		i++;
 	}
 }
 
@@ -128,26 +112,19 @@ float*	multyplyMat(float *result, float *mat1, float *mat2)
 	int i;
 	int j;
 	int k;
-	j = 0;
 	i = 0;
 	k = 0;
 	while (i < 16)
 	{
-		while (j < 4)
-		{
-			ptr[k] = mat1[i] * mat2[j] + mat1[i + 1] * mat2[j + 4] + mat1[i + 2] * mat2[j + 8] + mat1[i + 3] * mat2[j + 12];
-			j++;
-			k++;
-		}
-		j = 0;
+		j = -1;
+		while (++j < 4)
+			ptr[k++] = mat1[i] * mat2[j] + mat1[i + 1] * mat2[j + 4] + mat1[i + 2]
+			* mat2[j + 8] + mat1[i + 3] * mat2[j + 12];
 		i += 4;
 	}
-	i = 0;
-	while (i < 16)
-	{
+	i = -1;
+	while (++i < 16)
 		result[i] = ptr[i];
-		i++;
-	}
 	return result;
 }
 

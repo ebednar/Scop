@@ -41,6 +41,7 @@ typedef struct {
 } camera;
 
 typedef struct {
+	GLFWwindow		*window;
 	unsigned int	vboID;
 	unsigned int	iboID;
 	unsigned int	texture;
@@ -48,8 +49,19 @@ typedef struct {
 	camera*			cam;
 	unsigned int	vao;
 	unsigned int	lightvao;
-	float			switchLight[3];
-	char	keys[1024];
+	float			lightSwitch[3];
+	char			keys[1024];
+	float			deltaTime;
+	float			oldFrame;
+	float			currentFrame;
+	float			x;
+	float			y;
+	float			z;
+	float			angX;
+	float			angY;
+	float			angZ;
+	int				state;
+	int				wire;
 } render;
 
 typedef struct {
@@ -62,22 +74,24 @@ typedef struct {
 } image;
 
 typedef struct {
-	float*	verticies;
-	int		vCount;
+	float*			verticies;
+	int				vCount;
 	unsigned int*	indicies;
-	int		iCount;
-	int		isTexture;
+	int				iCount;
+	int				isTexture;
 } model;
 
 void			initGLFW();
-void			makeContext(GLFWwindow* window);
+void			makeContext(render* rend);
 void			error(int code);
-void			initBaseData(GLFWwindow* window, render* rend, matrices* mat, model* mod);
+void			initBaseData(render* rend, matrices* mat, model* mod);
 unsigned int	createShader(char* vertShader, char* fragShader);
 void			key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void			mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void			vertexBuffer(render* rend, const void* data, unsigned int size);
 void			bindBuffer(unsigned int renderID);
+void			setBuffers(render* rend, model* mod);
+void			unbind();
 void			indexBuffer(render* rend, const unsigned int* data, unsigned int count);
 unsigned int	loadImage(const char* filePath);
 void			camera_(camera* camera, matrices* mat);
@@ -87,7 +101,12 @@ void			cross(float* vec3, float* vec1, float* vec2);
 void			do_movement(render* rend, float delta);
 void			lightUniform(unsigned int shader, model* mod);
 void			loadModel(model* mod, char* path);
-void			fillTexture(float** modData, int vCount);
+void			fillTexture(float** modData, model* mod);
 void			fillNormal(float** modData, unsigned int** indData, int iCount);
+void			fillVerticies(model* mod, float** modData, unsigned int** indData);
+void			readInt(unsigned int** data, int* numb, char* line);
+void			startFrame(render* rend);
+void			drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod);
+void			drawPointLight(render* rend, matrices* mat, unsigned int vao, model* mod);
 
 #endif
