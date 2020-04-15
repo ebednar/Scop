@@ -60,8 +60,9 @@ typedef struct {
 	float			angX;
 	float			angY;
 	float			angZ;
-	int				state;
-	int				wire;
+	short int		state;
+	short int		wire;
+	short int		scene;
 } render;
 
 typedef struct {
@@ -79,12 +80,16 @@ typedef struct {
 	unsigned int*	indicies;
 	int				iCount;
 	int				isTexture;
+	char*			materialName;
+	float				specular[3];
+	int				shininess;
 } model;
 
 void			initGLFW();
 void			makeContext(render* rend);
 void			error(int code);
 void			initBaseData(render* rend, matrices* mat, model* mod);
+void			startPos(render* rend);
 unsigned int	createShader(char* vertShader, char* fragShader);
 void			key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void			mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -106,7 +111,9 @@ void			fillNormal(float** modData, unsigned int** indData, int iCount);
 void			fillVerticies(model* mod, float** modData, unsigned int** indData);
 void			readInt(unsigned int** data, int* numb, char* line);
 void			startFrame(render* rend);
+void			drawCycle(render* rend, matrices* mat, model* mod);
 void			drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod);
 void			drawPointLight(render* rend, matrices* mat, unsigned int vao, model* mod);
+void			readMaterial(model* mod, char* str);
 
 #endif

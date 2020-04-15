@@ -5,8 +5,6 @@ typedef struct {
 	float			*projMat;
 	float			*viewMat;
 	float			*modelMat;
-	float			*vp;
-	float			*mvp;
 	float			*rotMat;
 	float			*lookAt;
 } matrices;

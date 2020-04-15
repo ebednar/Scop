@@ -18,8 +18,6 @@ static void	freeMem(render* rend, matrices *mat)
 	free(mat->viewMat);
 	free(mat->projMat);
 	free(mat->rotMat);
-	free(mat->vp);
-	free(mat->mvp);
 	free(mat->lookAt);
 	free(mat);
 	free(rend->cam->direction);
@@ -31,6 +29,7 @@ static void	freeMem(render* rend, matrices *mat)
 	glDeleteProgram(rend->shader.modShader);
 	glDeleteProgram(rend->shader.lightShader);
 	free(rend);
+	glfwTerminate();
 }
 
 void		error(int code)
@@ -45,7 +44,8 @@ void		error(int code)
 		ft_putendl("memory allocation failed");
 	if (code == 5)
 		ft_putendl("Usage: ./scop [.obj file name]");
-	glfwTerminate();
+	if (code == 6)
+		ft_putendl("corrupted file");
 	exit(code);
 }
 
@@ -67,18 +67,13 @@ int			main(int argc, char **argv)
 	makeContext(rend);
 	loadModel(mod, argv[1]);
 	initBaseData(rend, mat, mod);
-	setBuffers(rend, mod);
     while (!glfwWindowShouldClose(rend->window))
     {
 		startFrame(rend);
-		drawFrame(rend, mat, rend->vao, mod);
-		drawPointLight(rend, mat, rend->lightvao, mod);
-		unbind();
-        glfwSwapBuffers(rend->window);
+		drawCycle(rend, mat, mod);
 		do_movement(rend, rend->deltaTime);
         glfwPollEvents();
     }
 	freeMem(rend, mat);
-    glfwTerminate();
 	return 0;
 }

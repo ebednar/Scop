@@ -12,6 +12,24 @@
 
 #include "scop.h"
 
+static void	switchScene(render* rend, int key, int action)
+{
+		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		rend->wire *= -1;
+		if (rend->wire == -1)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+	{
+		rend->scene *= -1;
+		if (rend->scene == -1) 
+			startPos(rend);
+	}
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	render* rend = glfwGetWindowUserPointer(window);
@@ -28,14 +46,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rend->state += 1;
 		rend->state %= 3;
 	}
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-	{
-		rend->wire *= -1;
-		if (rend->wire == -1)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
+	switchScene(rend, key, action);
 	if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
@@ -45,31 +56,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 	scancode = 0;
 	mode = 0;
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	render* rend;
-	float xoffset;
-    float yoffset;
-
-	rend = glfwGetWindowUserPointer(window);
-	xoffset = xpos - rend->cam->lastX;
-	yoffset = rend->cam->lastY - ypos;
-    rend->cam->lastX = xpos;
-    rend->cam->lastY = ypos;
-    xoffset *= 0.05;
-    yoffset *= 0.05;
-    rend->cam->yaw   += xoffset;
-    rend->cam->pitch += yoffset;
-    if(rend->cam->pitch > 89.0f)
-        rend->cam->pitch = 89.0f;
-    if(rend->cam->pitch < -89.0f)
-        rend->cam->pitch = -89.0f;
-    rend->cam->front[0] = cos(rend->cam->yaw * M_PI / 180) * cos(rend->cam->pitch * M_PI / 180);
-    rend->cam->front[1] = sin(rend->cam->pitch * M_PI / 180);
-    rend->cam->front[2] = sin(rend->cam->yaw * M_PI / 180) * cos(rend->cam->pitch * M_PI / 180);
-    normalize(rend->cam->front);
 }
 
 static void	modContrlos(render* rend)
@@ -87,17 +73,17 @@ static void	modContrlos(render* rend)
 	if (rend->keys[GLFW_KEY_L])
 		rend->z -= rend->deltaTime * 1.5f;
 	if (rend->keys[GLFW_KEY_DOWN])
-		rend->angX += rend->deltaTime * 20.0f;
+		rend->angX += rend->deltaTime * 40.0f;
 	if (rend->keys[GLFW_KEY_UP])
-		rend->angX -= rend->deltaTime * 20.0f;
+		rend->angX -= rend->deltaTime * 40.0f;
 	if (rend->keys[GLFW_KEY_RIGHT])
-		rend->angY += rend->deltaTime * 20.0f;
+		rend->angY += rend->deltaTime * 40.0f;
 	if (rend->keys[GLFW_KEY_LEFT])
-		rend->angY -= rend->deltaTime * 20.0f;
+		rend->angY -= rend->deltaTime * 40.0f;
 	if (rend->keys[GLFW_KEY_COMMA])
-		rend->angZ += rend->deltaTime * 20.0f;
+		rend->angZ += rend->deltaTime * 40.0f;
 	if (rend->keys[GLFW_KEY_PERIOD])
-		rend->angZ -= rend->deltaTime * 20.0f;
+		rend->angZ -= rend->deltaTime * 40.0f;
 }
 
 static void do_movement2(render* rend, float delta)

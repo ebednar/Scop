@@ -30,21 +30,45 @@ void	makeContext(render* rend)
 	ft_putendl((char *)glGetString(GL_VERSION));
 }
 
-void	initBaseData(render* rend, matrices* mat, model* mod)
+void	startPos(render* rend)
 {
-	rend->oldFrame = 0.0f;
 	rend->x = 0.0f;
 	rend->y = 0.0f;
 	rend->z = 0.0f;
 	rend->angX = 0.0f;
 	rend->angY = 0.0f;
 	rend->angZ = 0.0f;
+}
+
+static void	initMaterial(model* mod)
+{
+	int i;
+
+	if (mod->materialName == NULL)
+	{
+		i = -1;
+		while (++i < 3)
+			mod->specular[i] = 0.5f;
+		mod->shininess = 32.0f;
+	}
+	if (mod->shininess < 32)
+		mod->shininess = 32.0f;
+}
+
+void	initBaseData(render* rend, matrices* mat, model* mod)
+{
+	int i;
+
+	rend->oldFrame = 0.0f;
+	startPos(rend);
 	rend->state = 0;
 	rend->wire = -1;
+	rend->scene = -1;
 	ft_bzero(rend->keys, 1024);
-	int i = -1;
+	i = -1;
 	while (++i < 3)
 		rend->lightSwitch[i] = -1.0f;
+	initMaterial(mod);
 	rend->texture = loadImage("res/textures/cat.bmp");
 	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
 	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
@@ -53,4 +77,5 @@ void	initBaseData(render* rend, matrices* mat, model* mod)
 	camera_init(rend->cam);
 	initMat(mat);
 	perspMatrix(mat);
+	setBuffers(rend, mod);
 }

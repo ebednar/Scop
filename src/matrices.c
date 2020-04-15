@@ -10,10 +10,6 @@ void	initMat(matrices *mat)
 		error(4);
 	if (!(mat->projMat = (float *)malloc(16 * sizeof(float))))
 		error(4);
-	if (!(mat->vp = (float *)malloc(16 * sizeof(float))))
-		error(4);
-	if (!(mat->mvp = (float *)malloc(16 * sizeof(float))))
-		error(4);
 	if (!(mat->rotMat = (float *)malloc(16 * sizeof(float))))
 		error(4);
 	if (!(mat->lookAt = (float *)malloc(16 * sizeof(float))))

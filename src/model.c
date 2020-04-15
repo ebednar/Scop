@@ -24,6 +24,8 @@ static void	checkIndecies(model* mod, char* line)
 		mod->iCount++;
 	else if (count == 4)
 		mod->iCount += 2;
+	else
+		error(6);
 }
 
 static void	readFloat(float* data, char* line, int offset)
@@ -35,7 +37,7 @@ static void	readFloat(float* data, char* line, int offset)
 	i = -1;
 	while (line[++i] != '\0')
 	{
-		if (line[i] == 'f')
+		if ((line[i] < '0' || line[i] > '9') && line[i] != '.' && line[i] != '-' && line[i] != '+')
 			line[i] = ' ';
 	}
 	i = -1;
@@ -86,6 +88,7 @@ static void	vertCount(model* mod, char* path)
 	mod->isTexture = 1;
 	mod->vCount = 0;
 	mod->iCount = 0;
+	mod->materialName = NULL;
 	if ((fd = open(path, O_RDONLY)) < 0)
 		error(3);
 	while(get_next_line(fd, &line))
@@ -94,6 +97,8 @@ static void	vertCount(model* mod, char* path)
 			mod->vCount++;
 		if (line[0] == 'f')
 			checkIndecies(mod, line);
+		if (!(ft_strncmp(line, "mtllib", 6)))
+			readMaterial(mod, line);
 		free(line);
 	}
 	close(fd);
