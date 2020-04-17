@@ -1,33 +1,5 @@
 #include "scop.h"
 
-static void	checkIndecies(model* mod, char* line)
-{
-	char*	ptr1;
-	int		count;
-
-	count = 0;
-	ptr1 = line + 1;
-	while (*ptr1 != '\0')
-	{
-		if (*ptr1 >= '0' && *ptr1 <= '9')
-		{
-			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
-			{
-				ptr1++;
-			}
-			count++;
-		}
-		else
-			ptr1++;
-	}
-	if (count == 3)
-		mod->iCount++;
-	else if (count == 4)
-		mod->iCount += 2;
-	else
-		error(6);
-}
-
 static void	readFloat(float* data, char* line, int offset)
 {
 	char*	ptr1;
@@ -82,12 +54,17 @@ static void readVert(float** modData, unsigned int** indData, char* path, model*
 
 static void	vertCount(model* mod, char* path)
 {
-	int		fd;
-	char*	line;
+	int				fd;
+	char*			line;
+	unsigned int	vtCount;
+	unsigned int	vnCount;
 
+	checkFile(path);
 	mod->isTexture = 1;
 	mod->vCount = 0;
 	mod->iCount = 0;
+	vtCount = 0;
+	vnCount = 0;
 	mod->materialName = NULL;
 	if ((fd = open(path, O_RDONLY)) < 0)
 		error(3);
@@ -95,6 +72,10 @@ static void	vertCount(model* mod, char* path)
 	{
 		if (line[0] == 'v' && line[1] == ' ')
 			mod->vCount++;
+		if (line[0] == 'v' && line[1] == 't')
+			vtCount++;
+		if (line[0] == 'v' && line[1] == 'n')
+			vnCount++;
 		if (line[0] == 'f')
 			checkIndecies(mod, line);
 		if (!(ft_strncmp(line, "mtllib", 6)))
@@ -102,15 +83,17 @@ static void	vertCount(model* mod, char* path)
 		free(line);
 	}
 	close(fd);
+	if (mod->vCount == 0 || mod->iCount == 0 || vnCount > mod->vCount || vtCount > mod->vCount)
+		error(6);
 	printf("verticies in model %d\n", mod->vCount);
 	printf("faces in model %d\n", mod->iCount);
 }
 
 void		loadModel(model* mod, char* path)
 {
-	float**	modData;
+	float**			modData;
 	unsigned int**	indData;
-	int i;
+	unsigned int	i;
 
 	vertCount(mod, path);
 	if (!(modData = (float **)malloc(mod->vCount * sizeof(float *))))

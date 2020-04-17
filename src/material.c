@@ -30,7 +30,12 @@ void	loadMaterial(model* mod)
 	str = ft_strjoin("res/models/", mod->materialName);
 	free(mod->materialName);
 	if ((fd = open(str, O_RDONLY)) < 0)
-		error(3);
+	{
+		ft_putendl("no material file");
+		close(fd);
+		free(str);
+		return ;
+	}
 	free(str);
 	while(get_next_line(fd, &line))
 	{

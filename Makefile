@@ -25,7 +25,8 @@ SRC = 	./src/main.c \
 		./src/fill_verticies.c \
 		./src/draw.c \
 		./src/material.c \
-		./src/mouse.c
+		./src/mouse.c \
+		./src/error.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror

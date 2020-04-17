@@ -6,7 +6,7 @@ void	fillTexture(float** modData, model* mod)
 
 	mod->isTexture = 0;
 	i = 0;
-	while (i < mod->vCount)
+	while (i < (int)mod->vCount)
 	{
 		if (i % 3 == 0)
 		{
@@ -61,10 +61,10 @@ static void	freeData(model* mod, float** modData, unsigned int** indData)
 	int i;
 
 	i = -1;
-	while (++i < mod->vCount)
+	while (++i < (int)mod->vCount)
 		free(modData[i]);
 	i = -1;
-	while (++i < mod->iCount)
+	while (++i < (int)mod->iCount)
 		free(indData[i]);
 	free(modData);
 	free(indData);
@@ -78,7 +78,7 @@ void	fillVerticies(model* mod, float** modData, unsigned int** indData)
 
 	i = -1;
 	k = -1;
-	while (++i < mod->vCount)
+	while (++i < (int)mod->vCount)
 	{
 		j = -1;
 		while (++j < 8)
@@ -86,11 +86,15 @@ void	fillVerticies(model* mod, float** modData, unsigned int** indData)
 	}
 	i = -1;
 	k = -1;
-	while (++i < mod->iCount)
+	while (++i < (int)mod->iCount)
 	{
 		j = -1;
 		while (++j < 3)
+		{
+			if (indData[i][j] > mod->vCount)
+				error(6);
 			mod->indicies[++k] =  indData[i][j];
+		}
 	}
 	freeData(mod, modData, indData);
 }

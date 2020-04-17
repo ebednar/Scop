@@ -76,12 +76,12 @@ typedef struct {
 
 typedef struct {
 	float*			verticies;
-	int				vCount;
+	unsigned int	vCount;
 	unsigned int*	indicies;
-	int				iCount;
+	unsigned int	iCount;
 	int				isTexture;
 	char*			materialName;
-	float				specular[3];
+	float			specular[3];
 	int				shininess;
 } model;
 
@@ -106,6 +106,7 @@ void			cross(float* vec3, float* vec1, float* vec2);
 void			do_movement(render* rend, float delta);
 void			lightUniform(unsigned int shader, model* mod);
 void			loadModel(model* mod, char* path);
+void			checkIndecies(model* mod, char* line);
 void			fillTexture(float** modData, model* mod);
 void			fillNormal(float** modData, unsigned int** indData, int iCount);
 void			fillVerticies(model* mod, float** modData, unsigned int** indData);
@@ -115,5 +116,6 @@ void			drawCycle(render* rend, matrices* mat, model* mod);
 void			drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod);
 void			drawPointLight(render* rend, matrices* mat, unsigned int vao, model* mod);
 void			readMaterial(model* mod, char* str);
+void			checkFile(char* path);
 
 #endif
