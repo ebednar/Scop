@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   material.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/23 15:14:44 by ebednar           #+#    #+#             */
+/*   Updated: 2020/08/23 15:24:58 by ebednar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
 static void	readSpecular(model* mod, char* line)
@@ -57,7 +69,7 @@ void	readMaterial(model* mod, char* str)
 	if (!(mod->materialName = (char *)malloc(count * sizeof(char) + 1)))
 		error(4);
 	ft_strcpy(mod->materialName, str);
-	ft_putstr("material ");
+	ft_putstr("material: ");
 	ft_putendl(mod->materialName);
 	loadMaterial(mod);
 }

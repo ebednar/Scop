@@ -6,13 +6,13 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/03/15 23:03:53 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/08/23 15:36:50 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static void	freeMem(render* rend, matrices *mat)
+static void	free_mem(render *rend, matrices *mat)
 {
 	free(mat->modelMat);
 	free(mat->viewMat);
@@ -50,13 +50,13 @@ int			main(int argc, char **argv)
 	makeContext(rend);
 	loadModel(mod, argv[1]);
 	initBaseData(rend, mat, mod);
-    while (!glfwWindowShouldClose(rend->window))
-    {
+	while (!glfwWindowShouldClose(rend->window))
+	{
 		startFrame(rend);
 		drawCycle(rend, mat, mod);
 		do_movement(rend, rend->deltaTime);
-        glfwPollEvents();
-    }
-	freeMem(rend, mat);
-	return 0;
+		glfwPollEvents();
+	}
+	free_mem(rend, mat);
+	return (0);
 }

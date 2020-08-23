@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   textures.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/23 15:15:03 by ebednar           #+#    #+#             */
+/*   Updated: 2020/08/23 15:23:30 by ebednar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
 static void		readHeader(image *img)
@@ -5,16 +17,12 @@ static void		readHeader(image *img)
 	unsigned char*	ptr;
 	ptr = img->header + 10;
 	ft_memcpy(&img->dataOffset, ptr, 4);
-	printf("data offset %d\n", img->dataOffset);
 	ptr = img->header + 34;
 	ft_memcpy(&img->size, ptr, 4);
-	printf("image size %d\n", img->size);
 	ptr = img->header + 18;
 	ft_memcpy(&img->width, ptr, 4);
-	printf("image width %d\n", img->width);
 	ptr = img->header + 22;
 	ft_memcpy(&img->height, ptr, 4);
-	printf("image height %d\n", img->height);
 	if (img->size == 0)
 		img->size = img->width * img->height * 3;
 	if (img->dataOffset == 0)

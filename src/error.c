@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/23 15:14:30 by ebednar           #+#    #+#             */
+/*   Updated: 2020/08/23 15:15:10 by ebednar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
 void	checkFile(char* path)
@@ -21,7 +33,7 @@ void		error(int code)
 	if (code == 4)
 		ft_putendl("memory allocation failed");
 	if (code == 5)
-		ft_putendl("Usage: ./scop [file_name.obj]");
+		ft_putendl("Usage: ./scop [path/file_name.obj]");
 	if (code == 6)
 		ft_putendl("corrupted file");
 	exit(code);

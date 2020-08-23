@@ -1,22 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/08/23 15:14:38 by ebednar           #+#    #+#             */
+/*   Updated: 2020/08/23 15:41:52 by ebednar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
-void	initGLFW()
+void		init_glfw(void)
 {
-    if (!glfwInit())
-        error(1);
+	if (!glfwInit())
+		error(1);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-void	makeContext(render* rend)
+void		make_context(render *rend)
 {
+	int	width;
+	int	height;
+
 	if (!(rend->window = glfwCreateWindow(WIDTH, HEIGHT, "Scop", NULL, NULL)))
-        error(2);
+		error(2);
 	glfwMakeContextCurrent(rend->window);
 	glfwSwapInterval(1);
-	int width, height;
 	glfwGetFramebufferSize(rend->window, &width, &height);
 	glViewport(0, 0, width, height);
 	glfwSetInputMode(rend->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -30,7 +44,7 @@ void	makeContext(render* rend)
 	ft_putendl((char *)glGetString(GL_VERSION));
 }
 
-void	startPos(render* rend)
+void		start_pos(render *rend)
 {
 	rend->x = 0.0f;
 	rend->y = 0.0f;
@@ -40,7 +54,7 @@ void	startPos(render* rend)
 	rend->angZ = 0.0f;
 }
 
-static void	initMaterial(model* mod)
+static void	init_material(model *mod)
 {
 	int i;
 
@@ -55,7 +69,7 @@ static void	initMaterial(model* mod)
 		mod->shininess = 32.0f;
 }
 
-void	initBaseData(render* rend, matrices* mat, model* mod)
+void		init_base_data(render *rend, matrices *mat, model *mod)
 {
 	int i;
 
@@ -70,8 +84,10 @@ void	initBaseData(render* rend, matrices* mat, model* mod)
 		rend->lightSwitch[i] = -1.0f;
 	initMaterial(mod);
 	rend->texture = loadImage("res/textures/cat.bmp");
-	rend->shader.modShader = createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
-	rend->shader.lightShader = createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
+	rend->shader.modShader =
+	createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
+	rend->shader.lightShader =
+	createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
 	glUseProgram(rend->shader.modShader);
 	lightUniform(rend->shader.modShader, mod);
 	camera_init(rend->cam);
