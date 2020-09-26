@@ -12,11 +12,11 @@
 
 #include "scop.h"
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
-	render* rend;
-	float xoffset;
-    float yoffset;
+	render	*rend;
+	float	xoffset;
+    float	yoffset;
 
 	rend = glfwGetWindowUserPointer(window);
 	xoffset = xpos - rend->cam->lastX;

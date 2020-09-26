@@ -40,20 +40,20 @@ int			main(int argc, char **argv)
 
 	if (argc != 2)
 		error(5);
-	initGLFW();
+	init_glfw();
 	if (!(rend = (render *)malloc(sizeof(render))))
 		error(4);
 	if (!(mat = (matrices *)malloc(sizeof(matrices))))
 		error(4);
 	if (!(mod = (model *)malloc(sizeof(model))))
 		error(4);
-	makeContext(rend);
-	loadModel(mod, argv[1]);
-	initBaseData(rend, mat, mod);
+	make_context(rend);
+	load_model(mod, argv[1]);
+	init_base_data(rend, mat, mod);
 	while (!glfwWindowShouldClose(rend->window))
 	{
-		startFrame(rend);
-		drawCycle(rend, mat, mod);
+		start_frame(rend);
+		draw_cycle(rend, mat, mod);
 		do_movement(rend, rend->deltaTime);
 		glfwPollEvents();
 	}

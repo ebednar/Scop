@@ -14,7 +14,7 @@
 
 void	normalize(float *vec)
 {
-	float length;
+	float	length;
 
 	length = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
 	vec[0] = vec[0] / length;
@@ -22,14 +22,14 @@ void	normalize(float *vec)
 	vec[2] = vec[2] / length;
 }
 
-void	cross(float* vec3, float* vec1, float* vec2)
+void	cross(float *vec3, float *vec1, float *vec2)
 {
 	vec3[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
 	vec3[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
 	vec3[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
 }
 
-void	camera_init(camera* cam)
+void	camera_init(camera *cam)
 {
 	cam->lastX = WIDTH / 2;
 	cam->lastY = HEIGHT / 2;
@@ -53,10 +53,10 @@ void	camera_init(camera* cam)
 	cam->front[2] = -1.0f;
 }
 
-void	camera_(camera* camera, matrices* mat)
+void	camera_(camera *camera, matrices *mat)
 {
-	float up[3] = {0.0, 1.0, 0.0};
-	int i;
+	float	up[3] = {0.0, 1.0, 0.0};
+	int		i;
 
 	i = -1;
 	while (++i < 3)
@@ -67,5 +67,5 @@ void	camera_(camera* camera, matrices* mat)
 	cross(camera->up, camera->direction, camera->right);
 	float mat1[16] = {1.0f, 0.0f, 0.0f, -camera->pos[0], 0.0f, 1.0f, 0.0f, -camera->pos[1], 0.0f, 0.0f, 1.0f, -camera->pos[2], 0.0f, 0.0f, 0.0f, 1.0f};
 	float mat2[16] = {camera->right[0], camera->right[1], camera->right[2], 0.0, camera->up[0], camera->up[1], camera->up[2], 0.0f, camera->direction[0], camera->direction[1], camera->direction[2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-	multyplyMat(mat->lookAt, mat2, mat1);
+	multyply_mat(mat->lookAt, mat2, mat1);
 	}

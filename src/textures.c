@@ -12,9 +12,10 @@
 
 #include "scop.h"
 
-static void		readHeader(image *img)
+static void		read_header(image *img)
 {
-	unsigned char*	ptr;
+	unsigned char	*ptr;
+
 	ptr = img->header + 10;
 	ft_memcpy(&img->dataOffset, ptr, 4);
 	ptr = img->header + 34;
@@ -29,7 +30,7 @@ static void		readHeader(image *img)
 		img->dataOffset = 54;
 }
 
-static void		readData(image *img, int fd)
+static void		read_data(image *img, int fd)
 {
 	ssize_t	readed;
 	char	buff[img->dataOffset];
@@ -38,9 +39,10 @@ static void		readData(image *img, int fd)
 	readed = read(fd, img->data, img->size);
 }
 
-static int		applyTexture(image *img)
+static int		apply_texture(image *img)
 {
 	unsigned int	texture;
+
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -54,7 +56,7 @@ static int		applyTexture(image *img)
 	return texture;
 }
 
-unsigned int	loadImage(const char* filePath)
+unsigned int	load_image(const char *filePath)
 {
 	int		fd;
 	ssize_t	readed;
@@ -68,10 +70,10 @@ unsigned int	loadImage(const char* filePath)
     	ft_putendl("incorrect bmp file");
     	return 0;
 	}
-	readHeader(&img);
+	read_header(&img);
 	img.data = (unsigned char *)malloc(sizeof(unsigned char) * img.size);
-	readData(&img, fd);
+	read_data(&img, fd);
 	close(fd);
-	int texture = applyTexture(&img);
+	int texture = apply_texture(&img);
 	return texture;
 }

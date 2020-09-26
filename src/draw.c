@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-static void	scene2(render* rend, matrices* mat, model* mod)
+static void	scene2(render *rend, matrices *mat, model *mod)
 {
 	int i;
 	float angle;
@@ -20,15 +20,15 @@ static void	scene2(render* rend, matrices* mat, model* mod)
 	i = -1;
 	while (++i < 10)
 	{
-		translateMatrix(mat->modelMat, 2.0f * (i % 4), 0.0f, 2.0f * (i / 3));
+		translate_matrix(mat->modelMat, 2.0f * (i % 4), 0.0f, 2.0f * (i / 3));
 		angle = 10.0f * i;
-		rotateMatrix(mat->modelMat, angle, angle * 2, (float)glfwGetTime() * 40.0f);
+		rotate_matrix(mat->modelMat, angle, angle * 2, (float)glfwGetTime() * 40.0f);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat);
 		glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
 	}
 }
 
-void	drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod)
+void	draw_frame(render *rend, matrices *mat, unsigned int vao, model *mod)
 {
 	glUseProgram(rend->shader.modShader);
 	glUniform3f(glGetUniformLocation(rend->shader.modShader, "u_lightSwitch"), rend->lightSwitch[0], rend->lightSwitch[1], rend->lightSwitch[2]);
@@ -43,8 +43,8 @@ void	drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod)
 	glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_V"), 1, GL_TRUE, mat->lookAt);
 	if (rend->scene == -1)
 	{
-		translateMatrix(mat->modelMat, rend->x, rend->y, rend->z);
-		rotateMatrix(mat->modelMat, rend->angX, rend->angY, rend->angZ);
+		translate_matrix(mat->modelMat, rend->x, rend->y, rend->z);
+		rotate_matrix(mat->modelMat, rend->angX, rend->angY, rend->angZ);
 		glUniformMatrix4fv(glGetUniformLocation(rend->shader.modShader, "u_M"), 1, GL_TRUE, mat->modelMat);
 		glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
 	}
@@ -52,7 +52,7 @@ void	drawFrame(render* rend, matrices* mat, unsigned int vao, model* mod)
 		scene2(rend, mat, mod);
 }
 
-void	drawPointLight(render* rend, matrices* mat, unsigned int vao, model* mod)
+void	draw_point_light(render *rend, matrices *mat, unsigned int vao, model *mod)
 {
 	glUseProgram(rend->shader.lightShader);
 	glUniform1i(glGetUniformLocation(rend->shader.lightShader, "u_Texture"), 0);
@@ -60,16 +60,16 @@ void	drawPointLight(render* rend, matrices* mat, unsigned int vao, model* mod)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rend->iboID);
 	glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_P"), 1, GL_TRUE, mat->projMat);
 	glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_V"), 1, GL_TRUE, mat->lookAt);
-	translateMatrix(mat->modelMat, 2.5, 1.0, 1.5);
-	scaleMatrix(mat->modelMat, 0.1, 0.1, 0.1);
+	translate_matrix(mat->modelMat, 2.5, 1.0, 1.5);
+	scale_matrix(mat->modelMat, 0.1, 0.1, 0.1);
 	glUniformMatrix4fv(glGetUniformLocation(rend->shader.lightShader, "u_M"), 1, GL_TRUE, mat->modelMat);
 	glDrawElements(GL_TRIANGLES, mod->iCount * 3, GL_UNSIGNED_INT, 0);
 }
 
-void	drawCycle(render* rend, matrices* mat, model* mod)
+void	draw_cycle(render *rend, matrices *mat, model *mod)
 {
-	drawFrame(rend, mat, rend->vao, mod);
-	drawPointLight(rend, mat, rend->lightvao, mod);
+	draw_frame(rend, mat, rend->vao, mod);
+	draw_point_light(rend, mat, rend->lightvao, mod);
 	unbind();
 	glfwSwapBuffers(rend->window);
 }

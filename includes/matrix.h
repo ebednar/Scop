@@ -9,8 +9,17 @@ typedef struct {
 	float			*lookAt;
 } matrices;
 
+typedef struct {
+	float right;
+	float left;
+	float top;
+	float bottom;
+	float far;
+	float near;
+	float fov;
+ } proj_matrix;
+
 void			init_mat(matrices *mat);
-void			ort_matrix(matrices *mat);
 void			view_matrix(matrices *mat, float tx, float ty, float tz);
 void			translate_matrix(float *mat, float tx, float ty, float tz);
 float*			multyply_mat(float *result, float *mat1, float *mat2);

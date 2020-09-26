@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-void	fillTexture(float** modData, model* mod)
+void	fill_texture(float **modData, model *mod)
 {
 	int i;
 
@@ -39,7 +39,7 @@ void	fillTexture(float** modData, model* mod)
 	}
 }
 
-void	fillNormal(float** modData, unsigned int** indData, int iCount)
+void	fill_normal(float **modData, unsigned int **indData, int iCount)
 {
 	int		i;
 	float	vec1[3];
@@ -68,7 +68,7 @@ void	fillNormal(float** modData, unsigned int** indData, int iCount)
 	}
 }
 
-static void	freeData(model* mod, float** modData, unsigned int** indData)
+static void	free_data(model *mod, float **modData, unsigned int **indData)
 {
 	int i;
 
@@ -82,7 +82,7 @@ static void	freeData(model* mod, float** modData, unsigned int** indData)
 	free(indData);
 }
 
-void	fillVerticies(model* mod, float** modData, unsigned int** indData)
+void	fill_verticies(model *mod, float **modData, unsigned int **indData)
 {
 	int i;
 	int j;
@@ -108,5 +108,5 @@ void	fillVerticies(model* mod, float** modData, unsigned int** indData)
 			mod->indicies[++k] =  indData[i][j];
 		}
 	}
-	freeData(mod, modData, indData);
+	free_data(mod, modData, indData);
 }

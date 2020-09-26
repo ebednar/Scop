@@ -12,12 +12,12 @@
 
 #include "scop.h"
 
-static char* loadShader(char *filepath)
+static char* load_shader(char *filepath)
 {
-	int fd;
-	char *line;
-	char *shader;
-	char *tmp;
+	int		fd;
+	char	*line;
+	char	*shader;
+	char 	*tmp;
 
 	shader = ft_strnew(0);
 	if ((fd = open(filepath, O_RDONLY)) < 0)
@@ -38,13 +38,14 @@ static char* loadShader(char *filepath)
 	return (shader);
 }
 
-static unsigned int compileShader(unsigned int type, const char* source)
+static unsigned int compile_shader(unsigned int type, const char *source)
 {
-	unsigned id = glCreateShader(type);
+	int			result;
+	unsigned	id;
+
+	id = glCreateShader(type);
 	glShaderSource(id, 1, &source, NULL);
 	glCompileShader(id);
-
-	int result;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 	if (result == GL_FALSE)
 	{
@@ -62,19 +63,25 @@ static unsigned int compileShader(unsigned int type, const char* source)
 	return id;
 }
 
-unsigned int createShader(char* vertShader, char* fragShader)
+unsigned int create_shader(char *vertShader, char *fragShader)
 {	
-	char* vertexShader = loadShader(vertShader);
-	char* fragmentShader = loadShader(fragShader);
-	unsigned int program = glCreateProgram();
-	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	char			*vertexShader;
+	char			*fragmentShader;
+	unsigned int	program;
+	unsigned int	vs;
+	unsigned int	fs;
+	int				result;
+
+	vertexShader = load_shader(vertShader);
+	fragmentShader = load_shader(fragShader);
+	program = glCreateProgram();
+	vs = compile_shader(GL_VERTEX_SHADER, vertexShader);
+	fs = compile_shader(GL_FRAGMENT_SHADER, fragmentShader);
 	free(vertexShader);
 	free(fragmentShader);
 	glAttachShader(program, vs);
 	glAttachShader(program, fs);
 	glLinkProgram(program);
-	int result;
 	glGetProgramiv(program, GL_LINK_STATUS, &result);
 	if (!result)
 	{
@@ -94,7 +101,7 @@ unsigned int createShader(char* vertShader, char* fragShader)
 	return program;
 }
 
-void	lightUniform(unsigned int shader, model* mod)
+void	light_uniform(unsigned int shader, model *mod)
 {
 	glUniform1i(glGetUniformLocation(shader, "u_Texture"), 0);
 	glUniform1i(glGetUniformLocation(shader, "u_isText"), mod->isTexture);

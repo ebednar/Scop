@@ -12,9 +12,9 @@
 
 #include "scop.h"
 
-void	checkIndecies(model* mod, char* line)
+void	check_indecies(model *mod, char *line)
 {
-	char*	ptr1;
+	char	*ptr1;
 	int		count;
 
 	count = 0;
@@ -40,7 +40,7 @@ void	checkIndecies(model* mod, char* line)
 		error(6);
 }
 
-static void divSquare(unsigned int** data, int* numb, int count, int* ind)
+static void div_square(unsigned int **data, int *numb, int count, int *ind)
 {
 	int i;
 
@@ -57,9 +57,9 @@ static void divSquare(unsigned int** data, int* numb, int count, int* ind)
 	}
 }
 
-void		readInt(unsigned int** data, int* numb, char* line)
+void		read_int(unsigned int **data, int *numb, char *line)
 {
-	char*	ptr1;
+	char	*ptr1;
 	int		count;
 	int		ind[4];
 
@@ -77,5 +77,5 @@ void		readInt(unsigned int** data, int* numb, char* line)
 		else
 			ptr1++;
 	}
-	divSquare(data, numb, count, ind);
+	div_square(data, numb, count, ind);
 }

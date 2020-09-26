@@ -74,7 +74,7 @@ void		init_base_data(render *rend, matrices *mat, model *mod)
 	int i;
 
 	rend->oldFrame = 0.0f;
-	startPos(rend);
+	start_pos(rend);
 	rend->state = 0;
 	rend->wire = -1;
 	rend->scene = -1;
@@ -82,16 +82,16 @@ void		init_base_data(render *rend, matrices *mat, model *mod)
 	i = -1;
 	while (++i < 3)
 		rend->lightSwitch[i] = -1.0f;
-	initMaterial(mod);
-	rend->texture = loadImage("res/textures/cat.bmp");
+	init_material(mod);
+	rend->texture = load_image("res/textures/cat.bmp");
 	rend->shader.modShader =
-	createShader("res/shaders/VertexShader", "res/shaders/FragmentShader");
+	create_shader("res/shaders/VertexShader", "res/shaders/FragmentShader");
 	rend->shader.lightShader =
-	createShader("res/shaders/VertexShader", "res/shaders/LightFragShader");
+	create_shader("res/shaders/VertexShader", "res/shaders/LightFragShader");
 	glUseProgram(rend->shader.modShader);
-	lightUniform(rend->shader.modShader, mod);
+	light_uniform(rend->shader.modShader, mod);
 	camera_init(rend->cam);
-	initMat(mat);
-	perspMatrix(mat);
-	setBuffers(rend, mod);
+	init_mat(mat);
+	persp_matrix(mat);
+	set_buffers(rend, mod);
 }

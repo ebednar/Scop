@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-void	initMat(matrices *mat)
+void	init_mat(matrices *mat)
 {
 	unsigned int i;
 
@@ -37,54 +37,35 @@ void	initMat(matrices *mat)
 	}
 }
 
-void	perspMatrix(matrices *mat)
+void	persp_matrix(matrices *mat)
 {
-	float right;
-	float left;
-	float top;
-	float bottom;
-	float far = 100.0f;
-	float near = 0.1f;
-	float fov = 60.0f;
-	right = near * tanf((fov / 2.0f) * M_PI / 180.0);
-	left = - right;
-	top = right * (float)HEIGHT / (float)WIDTH;
-	bottom = - top;
-	float tx = 0.0f;
-	float ty = 0.0f;	
-	float tz = - (2.0f * far * near)/(far - near);
-	mat->projMat[0] = near / right;
+	proj_matrix	matrix;
+	float		tx;
+	float		ty;
+	float		tz;
+
+	matrix.far = 100.0f;
+	matrix.near = 0.1f;
+	matrix.fov = 60.0f;
+	matrix.right = matrix.near * tanf((matrix.fov / 2.0f) * M_PI / 180.0);
+	matrix.left = - matrix.right;
+	matrix.top = matrix.right * (float)HEIGHT / (float)WIDTH;
+	matrix.bottom = - matrix.top;
+	tx = 0.0f;
+	ty = 0.0f;	
+	tz = - (2.0f * matrix.far * matrix.near)/(matrix.far - matrix.near);
+	mat->projMat[0] = matrix.near / matrix.right;
 	mat->projMat[3] = tx;
-	mat->projMat[5] = near / top;
+	mat->projMat[5] = matrix.near / matrix.top;
 	mat->projMat[7] = ty;
-	mat->projMat[10] = - (far + near) / (far - near);
+	mat->projMat[10] = - (matrix.far + matrix.near) / (matrix.far - matrix.near);
 	mat->projMat[11] = tz;
 	mat->projMat[14] = - 1.0f;
 }
 
-void	ortMatrix(matrices *mat)
+void	view_matrix(matrices *mat, float tx, float ty, float tz)
 {
-	float right = 1.0f;
-	float left = - 1.0f;
-	float top = 1.0f;
-	float bottom = -1.0f;
-	float far = 10.0f;
-	float near = 0.1f;
-	float tx = - (right + left)/(right - left);
-	float ty = - (top + bottom)/(top - bottom);	
-	float tz = - (far + near)/(far - near);
-	mat->projMat[0] = 2.0f / (right - left);
-	mat->projMat[3] = tx;
-	mat->projMat[5] = 2.0f / (top - bottom);
-	mat->projMat[7] = ty;
-	mat->projMat[10] = - 2.0f / (far - near);
-	mat->projMat[11] = tz;
-	mat->projMat[15] = 1.0f;
-}
-
-void	viewMatrix(matrices *mat, float tx, float ty, float tz)
-{
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < 16)
@@ -98,9 +79,9 @@ void	viewMatrix(matrices *mat, float tx, float ty, float tz)
 	mat->viewMat[15] = 1.0f;
 }
 
-void	translateMatrix(float *mat, float tx, float ty, float tz)
+void	translate_matrix(float *mat, float tx, float ty, float tz)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < 16)
@@ -114,12 +95,13 @@ void	translateMatrix(float *mat, float tx, float ty, float tz)
 	mat[15] = 1.0f;
 }
 
-float*	multyplyMat(float *result, float *mat1, float *mat2)
+float*	multyply_mat(float *result, float *mat1, float *mat2)
 {
-	float ptr[16];
-	int i;
-	int j;
-	int k;
+	float	ptr[16];
+	int		j;
+	int		i;
+	int		k;
+
 	i = 0;
 	k = 0;
 	while (i < 16)
@@ -136,7 +118,7 @@ float*	multyplyMat(float *result, float *mat1, float *mat2)
 	return result;
 }
 
-void	scaleMatrix(float *mat, float tx, float ty, float tz)
+void	scale_matrix(float *mat, float tx, float ty, float tz)
 {
 	int		i;
 	float	ptr[16];
@@ -148,7 +130,7 @@ void	scaleMatrix(float *mat, float tx, float ty, float tz)
 	ptr[5] = ty;
 	ptr[10] = tz;
 	ptr[15] = 1.0f;
-	multyplyMat(ptr, mat, ptr);
+	multyply_mat(ptr, mat, ptr);
 	i = -1;
 	while (++i < 16)
 		mat[i] = ptr[i];

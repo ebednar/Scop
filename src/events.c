@@ -12,7 +12,7 @@
 
 #include "scop.h"
 
-static void	switchScene(render* rend, int key, int action)
+static void	switch_scene(render *rend, int key, int action)
 {
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
@@ -26,13 +26,15 @@ static void	switchScene(render* rend, int key, int action)
 	{
 		rend->scene *= -1;
 		if (rend->scene == -1) 
-			startPos(rend);
+			start_pos(rend);
 	}
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
-	render* rend = glfwGetWindowUserPointer(window);
+	render	*rend;
+	
+	rend = glfwGetWindowUserPointer(window);
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, GL_TRUE);
 	if(key == GLFW_KEY_1 && action == GLFW_PRESS)
@@ -46,7 +48,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rend->state += 1;
 		rend->state %= 3;
 	}
-	switchScene(rend, key, action);
+	switch_scene(rend, key, action);
 	if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
@@ -58,7 +60,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	mode = 0;
 }
 
-static void	modContrlos(render* rend)
+static void	mod_contrlos(render *rend)
 {
 	if (rend->keys[GLFW_KEY_U])
 		rend->x += rend->deltaTime * 1.5f;
@@ -86,7 +88,7 @@ static void	modContrlos(render* rend)
 		rend->angZ -= rend->deltaTime * 40.0f;
 }
 
-static void do_movement2(render* rend, float delta)
+static void do_movement2(render *rend, float delta)
 {
 	float vec[3];
 
@@ -108,7 +110,7 @@ static void do_movement2(render* rend, float delta)
 	}
 }
 
-void do_movement(render* rend, float delta)
+void do_movement(render *rend, float delta)
 {
     if (rend->keys[GLFW_KEY_W])
 	{
@@ -123,5 +125,5 @@ void do_movement(render* rend, float delta)
 		rend->cam->pos[2] -= delta * 1.5f * rend->cam->front[2];
 	}
 	do_movement2(rend, delta);
-	modContrlos(rend);
+	mod_contrlos(rend);
 }

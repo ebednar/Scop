@@ -12,9 +12,9 @@
 
 #include "scop.h"
 
-void	checkFile(char* path)
+void	check_file(char *path)
 {	
-	char*	ptr;
+	char	*ptr;
 
 	ptr = path + ft_strlen(path) - 4;
 	if (ft_strcmp(".obj", ptr))

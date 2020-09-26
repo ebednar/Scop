@@ -50,19 +50,19 @@ char *path, model *mod)
 	while (get_next_line(fd, &line))
 	{
 		if (line[0] == 'v' && line[1] == ' ')
-			readFloat(mod_data[vert[0]++], line, 0);
+			read_float(mod_data[vert[0]++], line, 0);
 		if (line[0] == 'v' && line[1] == 't')
-			readFloat(mod_data[vert[1]++], line, 3);
+			read_float(mod_data[vert[1]++], line, 3);
 		if (line[0] == 'v' && line[1] == 'n')
-			readFloat(mod_data[vert[2]++], line, 5);
+			read_float(mod_data[vert[2]++], line, 5);
 		if (line[0] == 'f')
-			readInt(ind_data, &(vert[3]), line);
+			read_int(ind_data, &(vert[3]), line);
 		free(line);
 	}
 	if (vert[1] == 0)
-		fillTexture(mod_data, mod);
+		fill_texture(mod_data, mod);
 	if (vert[2] == 0)
-		fillNormal(mod_data, ind_data, mod->iCount);
+		fill_normal(mod_data, ind_data, mod->iCount);
 	close(fd);
 }
 
@@ -73,7 +73,7 @@ static void	vert_count(model *mod, char *path)
 	unsigned int	vt_count;
 	unsigned int	vn_count;
 
-	checkFile(path);
+	check_file(path);
 	mod->isTexture = 1;
 	mod->vCount = 0;
 	mod->iCount = 0;
@@ -91,9 +91,9 @@ static void	vert_count(model *mod, char *path)
 		if (line[0] == 'v' && line[1] == 'n')
 			vn_count++;
 		if (line[0] == 'f')
-			checkIndecies(mod, line);
+			check_indecies(mod, line);
 		if (!(ft_strncmp(line, "mtllib", 6)))
-			readMaterial(mod, line);
+			read_material(mod, line);
 		free(line);
 	}
 	close(fd);
@@ -120,10 +120,10 @@ void		load_model(model *mod, char *path)
 	while (++i < mod->iCount)
 		if (!(ind_data[i] = (unsigned int *)malloc(3 * sizeof(unsigned int))))
 			error(4);
-	readVert(mod_data, ind_data, path, mod);
+	read_vert(mod_data, ind_data, path, mod);
 	if (!(mod->verticies = (float *)malloc((8 * mod->vCount) * sizeof(float))))
 			error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->iCount) * sizeof(unsigned int))))
 			error(4);
-	fillVerticies(mod, mod_data, ind_data);
+	fill_verticies(mod, mod_data, ind_data);
 }
