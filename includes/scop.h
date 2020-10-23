@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 18:10:36 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:52:51 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 22:10:10 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,99 +22,113 @@
 # define WIDTH 1280
 # define HEIGHT 720
 
-typedef struct {
-	unsigned int modShader;
-	unsigned int lightShader;
-} shaders;
+typedef struct		s_shaders
+{
+	unsigned int	mod_shader;
+	unsigned int	light_shader;
+}					t_shaders;
 
-typedef struct {
-	float	*pos;
-	float	*direction;
-	float	*right;
-	float	*up;
-	float	*front;
-	float	lastX;
-	float	lastY;
-	float	yaw;
-	float	pitch;
-} camera;
+typedef struct		s_camera
+{
+	float			*pos;
+	float			*direction;
+	float			*right;
+	float			*up;
+	float			*front;
+	float			last_x;
+	float			last_y;
+	float			yaw;
+	float			pitch;
+}					t_camera;
 
-typedef struct {
+typedef struct		s_render
+{
 	GLFWwindow		*window;
-	unsigned int	vboID;
-	unsigned int	iboID;
+	unsigned int	vbo_id;
+	unsigned int	ibo_id;
 	unsigned int	texture;
-	shaders			shader;
-	camera			*cam;
+	t_shaders		shader;
+	t_camera		*cam;
 	unsigned int	vao;
 	unsigned int	lightvao;
-	float			lightSwitch[3];
+	float			light_switch[3];
 	char			keys[1024];
-	float			deltaTime;
-	float			oldFrame;
-	float			currentFrame;
+	float			delta_time;
+	float			old_frame;
+	float			current_frame;
 	float			x;
 	float			y;
 	float			z;
-	float			angX;
-	float			angY;
-	float			angZ;
+	float			ang_x;
+	float			ang_y;
+	float			ang_z;
 	short int		state;
 	short int		wire;
 	short int		scene;
-} render;
+}					t_render;
 
-typedef struct {
+typedef struct		s_image
+{
 	unsigned char	header[54];
-	unsigned int	dataOffset;
+	unsigned int	data_offset;
 	unsigned int	width;
 	unsigned int	height;
 	unsigned int	size;
 	unsigned char	*data;
-} image;
+}					t_image;
 
-typedef struct {
+typedef struct		s_model
+{
 	float			*verticies;
-	unsigned int	vCount;
+	unsigned int	v_count;
 	unsigned int	*indicies;
-	unsigned int	iCount;
-	int				isTexture;
-	char			*materialName;
+	unsigned int	i_count;
+	int				is_texture;
+	char			*material_name;
 	float			specular[3];
 	int				shininess;
-} model;
+}					t_model;
 
-void			init_glfw();
-void			make_context(render *rend);
-void			error(int code);
-void			init_base_data(render *rend, matrices *mat, model *mod);
-void			start_pos(render *rend);
-unsigned int	create_shader(char *vertShader, char *fragShader);
-void			key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-void			mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void			vertex_buffer(render *rend, const void* data, unsigned int size);
-void			bind_buffer(unsigned int renderID);
-void			set_buffers(render *rend, model *mod);
-void			unbind();
-void			index_buffer(render *rend, const unsigned int *data, unsigned int count);
-unsigned int	load_image(const char *filePath);
-void			camera_(camera *camera, matrices *mat);
-void			camera_init(camera *camera);
-void			normalize(float *vec);
-void			cross(float *vec3, float *vec1, float *vec2);
-void			do_movement(render *rend, float delta);
-void			light_uniform(unsigned int shader, model *mod);
-void			load_model(model *mod, char *path);
-void			check_indecies(model *mod, char *line);
-void			fill_texture(float **modData, model *mod);
-void			fill_normal(float **modData, unsigned int **indData, int iCount);
-void			fill_verticies(model *mod, float **modData, unsigned int **indData);
-void			read_int(unsigned int **data, int *numb, char *line);
-void			start_frame(render *rend);
-void			draw_cycle(render *rend, matrices *mat, model *mod);
-void			draw_frame(render *rend, matrices *mat, unsigned int vao, model *mod);
-void			draw_point_light(render *rend, matrices *mat, unsigned int vao, model *mod);
-void			read_material(model *mod, char *str);
-void			check_file(char *path);
+void				init_glfw();
+void				make_context(t_render *rend);
+void				error(int code);
+void				init_base_data(t_render *rend, t_matrices *mat
+, t_model *mod);
+void				start_pos(t_render *rend);
+unsigned int		create_shader(char *vert_shader, char *frag_shader);
+void				key_callback(GLFWwindow *window, int key, int scancode
+, int action, int mode);
+void				mouse_callback(GLFWwindow *window, double xpos
+, double ypos);
+void				vertex_buffer(t_render *rend, const void *data
+, unsigned int size);
+void				bind_buffer(unsigned int render_id);
+void				set_buffers(t_render *rend, t_model *mod);
+void				unbind();
+void				index_buffer(t_render *rend, const unsigned int *data
+, unsigned int count);
+unsigned int		load_image(const char *file_path);
+void				camera_m(t_camera *camera, t_matrices *mat);
+void				camera_init(t_camera *camera);
+void				normalize(float *vec);
+void				cross(float *vec3, float *vec1, float *vec2);
+void				do_movement(t_render *rend, float delta);
+void				light_uniform(unsigned int shader, t_model *mod);
+void				load_model(t_model *mod, char *path);
+void				check_indecies(t_model *mod, char *line);
+void				fill_texture(float **mod_data, t_model *mod);
+void				fill_normal(float **mod_data, unsigned int **ind_data
+, int i_count);
+void				fill_verticies(t_model *mod, float **mod_data
+, unsigned int **ind_data);
+void				read_int(unsigned int **data, int *numb, char *line);
+void				start_frame(t_render *rend);
+void				draw_cycle(t_render *rend, t_matrices *mat, t_model *mod);
+void				draw_frame(t_render *rend, t_matrices *mat, unsigned int vao
+, t_model *mod);
+void				draw_point_light(t_render *rend, t_matrices *mat
+, unsigned int vao, t_model *mod);
+void				read_material(t_model *mod, char *str);
+void				check_file(char *path);
 
 #endif

@@ -6,13 +6,13 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:44 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:24:58 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 22:22:05 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static void	read_specular(model *mod, char *line)
+static void	read_specular(t_model *mod, char *line)
 {
 	char	*ptr1;
 	char	*ptr2;
@@ -33,14 +33,14 @@ static void	read_specular(model *mod, char *line)
 	}
 }
 
-void	load_material(model *mod)
+void		load_material(t_model *mod)
 {
 	int		fd;
 	char	*str;
 	char	*line;
 
-	str = ft_strjoin("res/models/", mod->materialName);
-	free(mod->materialName);
+	str = ft_strjoin("res/models/", mod->material_name);
+	free(mod->material_name);
 	if ((fd = open(str, O_RDONLY)) < 0)
 	{
 		ft_putendl("no material file");
@@ -49,7 +49,7 @@ void	load_material(model *mod)
 		return ;
 	}
 	free(str);
-	while(get_next_line(fd, &line))
+	while (get_next_line(fd, &line))
 	{
 		if (line[0] == 'N' && line[1] == 's')
 			mod->shininess = ft_atoi(line + 2);
@@ -60,16 +60,16 @@ void	load_material(model *mod)
 	close(fd);
 }
 
-void	read_material(model *mod, char *str)
+void		read_material(t_model *mod, char *str)
 {
 	int count;
 
 	str = str + 7;
 	count = ft_strlen(str);
-	if (!(mod->materialName = (char *)malloc(count * sizeof(char) + 1)))
+	if (!(mod->material_name = (char *)malloc(count * sizeof(char) + 1)))
 		error(4);
-	ft_strcpy(mod->materialName, str);
+	ft_strcpy(mod->material_name, str);
 	ft_putstr("material: ");
-	ft_putendl(mod->materialName);
+	ft_putendl(mod->material_name);
 	load_material(mod);
 }

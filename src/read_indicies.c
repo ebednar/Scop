@@ -6,13 +6,13 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:56 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:15:10 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 22:02:08 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-void	check_indecies(model *mod, char *line)
+void		check_indecies(t_model *mod, char *line)
 {
 	char	*ptr1;
 	int		count;
@@ -33,14 +33,14 @@ void	check_indecies(model *mod, char *line)
 			ptr1++;
 	}
 	if (count == 3)
-		mod->iCount++;
+		mod->i_count++;
 	else if (count == 4)
-		mod->iCount += 2;
+		mod->i_count += 2;
 	else
 		error(6);
 }
 
-static void div_square(unsigned int **data, int *numb, int count, int *ind)
+static void	div_square(unsigned int **data, int *numb, int count, int *ind)
 {
 	int i;
 

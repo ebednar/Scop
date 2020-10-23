@@ -6,18 +6,20 @@
 #    By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/20 14:23:06 by twitting          #+#    #+#              #
-#    Updated: 2020/03/15 23:03:11 by ebednar          ###   ########.fr        #
+#    Updated: 2020/10/23 21:02:28 by ebednar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = scop
 SRC = 	./src/main.c \
 		./src/shaders.c \
+		./src/shader_light_u.c \
 		./src/events.c \
 		./src/render.c \
 		./src/textures.c \
 		./src/init.c \
 		./src/matrices.c \
+		./src/matrix_proj.c \
 		./src/matrix_rotate.c \
 		./src/camera.c \
 		./src/model.c \

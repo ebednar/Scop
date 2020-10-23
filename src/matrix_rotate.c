@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:49 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:15:10 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 20:26:37 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	rotate_z_matrix(float *mat, float angle)
 		mat[i] = ptr[i];
 }
 
-void	rotate_matrix(float *mat, float a, float b, float c)
+void		rotate_matrix(float *mat, float a, float b, float c)
 {
 	rotate_x_matrix(mat, a);
 	rotate_y_matrix(mat, b);

@@ -6,19 +6,19 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:36:50 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 22:16:57 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static void	free_mem(render *rend, matrices *mat)
+static void	free_mem(t_render *rend, t_matrices *mat)
 {
-	free(mat->modelMat);
-	free(mat->viewMat);
-	free(mat->projMat);
-	free(mat->rotMat);
-	free(mat->lookAt);
+	free(mat->model_mat);
+	free(mat->view_mat);
+	free(mat->proj_mat);
+	free(mat->rot_mat);
+	free(mat->look_at);
 	free(mat);
 	free(rend->cam->direction);
 	free(rend->cam->front);
@@ -26,26 +26,26 @@ static void	free_mem(render *rend, matrices *mat)
 	free(rend->cam->up);
 	free(rend->cam->right);
 	free(rend->cam);
-	glDeleteProgram(rend->shader.modShader);
-	glDeleteProgram(rend->shader.lightShader);
+	glDeleteProgram(rend->shader.mod_shader);
+	glDeleteProgram(rend->shader.light_shader);
 	free(rend);
 	glfwTerminate();
 }
 
 int			main(int argc, char **argv)
 {
-	render		*rend;
-	matrices	*mat;
-	model		*mod;
+	t_render	*rend;
+	t_matrices	*mat;
+	t_model		*mod;
 
 	if (argc != 2)
 		error(5);
 	init_glfw();
-	if (!(rend = (render *)malloc(sizeof(render))))
+	if (!(rend = (t_render *)malloc(sizeof(t_render))))
 		error(4);
-	if (!(mat = (matrices *)malloc(sizeof(matrices))))
+	if (!(mat = (t_matrices *)malloc(sizeof(t_matrices))))
 		error(4);
-	if (!(mod = (model *)malloc(sizeof(model))))
+	if (!(mod = (t_model *)malloc(sizeof(t_model))))
 		error(4);
 	make_context(rend);
 	load_model(mod, argv[1]);
@@ -54,7 +54,7 @@ int			main(int argc, char **argv)
 	{
 		start_frame(rend);
 		draw_cycle(rend, mat, mod);
-		do_movement(rend, rend->deltaTime);
+		do_movement(rend, rend->delta_time);
 		glfwPollEvents();
 	}
 	free_mem(rend, mat);

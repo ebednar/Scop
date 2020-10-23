@@ -6,23 +6,22 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:30 by ebednar           #+#    #+#             */
-/*   Updated: 2020/08/23 15:15:10 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/10/23 20:03:05 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
 void	check_file(char *path)
-{	
+{
 	char	*ptr;
 
 	ptr = path + ft_strlen(path) - 4;
 	if (ft_strcmp(".obj", ptr))
 		error(5);
-	//ft_putchar(*(ft_strcpy(".obj", path + ft_strlen(path) - 4)));
 }
 
-void		error(int code)
+void	error(int code)
 {
 	if (code == 1)
 		ft_putendl("glwf init error");
