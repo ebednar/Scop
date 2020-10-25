@@ -35,7 +35,7 @@ void		make_context(t_render *rend)
 	glViewport(0, 0, width, height);
 	glfwSetInputMode(rend->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetWindowUserPointer(rend->window, rend);
-	glfwSetKeyCallback(rend->window, key_callback);
+	// glfwSetKeyCallback(rend->window, key_callback);
 	glfwSetCursorPosCallback(rend->window, mouse_callback);
 	if (!(rend->cam = (t_camera *)malloc(sizeof(t_camera))))
 		error(4);
@@ -79,6 +79,7 @@ void		init_base_data(t_render *rend, t_matrices *mat, t_model *mod)
 	rend->wire = -1;
 	rend->scene = -1;
 	ft_bzero(rend->keys, 1024);
+	ft_bzero(rend->fkeys, 1024);
 	i = -1;
 	while (++i < 3)
 		rend->light_switch[i] = -1.0f;

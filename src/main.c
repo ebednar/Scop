@@ -52,6 +52,7 @@ int			main(int argc, char **argv)
 	init_base_data(rend, mat, mod);
 	while (!glfwWindowShouldClose(rend->window))
 	{
+		key_callback(rend);
 		start_frame(rend);
 		draw_cycle(rend, mat, mod);
 		do_movement(rend, rend->delta_time);

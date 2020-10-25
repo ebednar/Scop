@@ -12,50 +12,64 @@
 
 #include "scop.h"
 
-static void	switch_scene(t_render *rend, int key, int action)
+static void	switch_scene(t_render *rend)
 {
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	if (rend->keys[GLFW_KEY_SPACE] && !rend->fkeys[GLFW_KEY_SPACE])
 	{
 		rend->wire *= -1;
 		if (rend->wire == -1)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		rend->fkeys[GLFW_KEY_SPACE] = 1;
 	}
-	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+	if (rend->keys[GLFW_KEY_TAB] && !rend->fkeys[GLFW_KEY_TAB])
 	{
 		rend->scene *= -1;
 		if (rend->scene == -1)
 			start_pos(rend);
+		rend->fkeys[GLFW_KEY_TAB] = 1;
 	}
 }
 
-void		key_callback(GLFWwindow *window, int key, int scancode,
-int action, int mode)
+void		key_callback(t_render *rend)
 {
-	t_render	*rend;
+	int i;
 
-	rend = glfwGetWindowUserPointer(window);
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-		rend->light_switch[0] *= -1;
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-		rend->light_switch[1] *= -1;
-	if (key == GLFW_KEY_3 && action == GLFW_PRESS)
-		rend->light_switch[2] *= -1;
-	if (key == GLFW_KEY_T && action == GLFW_PRESS)
-		rend->state = (rend->state + 1) % 3;
-	switch_scene(rend, key, action);
-	if (key >= 0 && key < 1024)
+	i = -1;
+	while (++i <= 1024)
 	{
-		if (action == GLFW_PRESS)
-			rend->keys[key] = 1;
-		else if (action == GLFW_RELEASE)
-			rend->keys[key] = 0;
+		if (glfwGetKey(rend->window, i) == GLFW_PRESS && !rend->keys[i])
+			rend->keys[i] = 1;
+		else if (glfwGetKey(rend->window, i) == GLFW_RELEASE && rend->keys[i])
+		{
+			rend->keys[i] = 0;
+			rend->fkeys[i] = 0;
+		}
 	}
-	scancode = 0;
-	mode = 0;
+	if (rend->keys[GLFW_KEY_ESCAPE])
+		glfwSetWindowShouldClose(rend->window, GL_TRUE);
+	if (rend->keys[GLFW_KEY_1] && !rend->fkeys[GLFW_KEY_1])
+	{
+		rend->light_switch[0] *= -1;
+		rend->fkeys[GLFW_KEY_1] = 1;
+	}
+	if (rend->keys[GLFW_KEY_2] && !rend->fkeys[GLFW_KEY_2])
+	{
+		rend->light_switch[1] *= -1;
+		rend->fkeys[GLFW_KEY_2] = 1;
+	}
+	if (rend->keys[GLFW_KEY_3] && !rend->fkeys[GLFW_KEY_3])
+	{
+		rend->light_switch[2] *= -1;
+		rend->fkeys[GLFW_KEY_3] = 1;
+	}
+	if (rend->keys[GLFW_KEY_T] && !rend->fkeys[GLFW_KEY_T])
+	{
+		rend->state = (rend->state + 1) % 3;
+		rend->fkeys[GLFW_KEY_T] = 1;
+	}
+	switch_scene(rend);
 }
 
 static void	mod_contrlos(t_render *rend)

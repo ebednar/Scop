@@ -53,6 +53,7 @@ typedef struct		s_render
 	unsigned int	lightvao;
 	float			light_switch[3];
 	char			keys[1024];
+	char			fkeys[1024];
 	float			delta_time;
 	float			old_frame;
 	float			current_frame;
@@ -96,8 +97,7 @@ void				init_base_data(t_render *rend, t_matrices *mat
 , t_model *mod);
 void				start_pos(t_render *rend);
 unsigned int		create_shader(char *vert_shader, char *frag_shader);
-void				key_callback(GLFWwindow *window, int key, int scancode
-, int action, int mode);
+void				key_callback(t_render *rend);
 void				mouse_callback(GLFWwindow *window, double xpos
 , double ypos);
 void				vertex_buffer(t_render *rend, const void *data
