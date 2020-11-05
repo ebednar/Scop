@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:27 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:55:14 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/05 20:03:39 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void		draw_point_light(t_render *rend, t_matrices *mat, unsigned int vao
 
 void		draw_cycle(t_render *rend, t_matrices *mat, t_model *mod)
 {
+	start_frame(rend);
 	draw_frame(rend, mat, rend->vao, mod);
 	draw_point_light(rend, mat, rend->lightvao, mod);
 	unbind();

@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:16:57 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/05 20:09:25 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ int			main(int argc, char **argv)
 	while (!glfwWindowShouldClose(rend->window))
 	{
 		key_callback(rend);
-		start_frame(rend);
 		draw_cycle(rend, mat, mod);
 		do_movement(rend, rend->delta_time);
 		glfwPollEvents();

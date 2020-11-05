@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:38 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:13:48 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/05 19:54:14 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void		make_context(t_render *rend)
 	glViewport(0, 0, width, height);
 	glfwSetInputMode(rend->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetWindowUserPointer(rend->window, rend);
-	// glfwSetKeyCallback(rend->window, key_callback);
 	glfwSetCursorPosCallback(rend->window, mouse_callback);
 	if (!(rend->cam = (t_camera *)malloc(sizeof(t_camera))))
 		error(4);
