@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/05 19:56:36 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 19:56:57 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/14 20:30:32 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,7 @@ static void	mod_contrlos(t_render *rend)
 		rend->z += rend->delta_time * 1.5f;
 	if (rend->keys[GLFW_KEY_L])
 		rend->z -= rend->delta_time * 1.5f;
-	if (rend->keys[GLFW_KEY_DOWN])
-		rend->ang_x += rend->delta_time * 40.0f;
-	if (rend->keys[GLFW_KEY_UP])
-		rend->ang_x -= rend->delta_time * 40.0f;
-	if (rend->keys[GLFW_KEY_RIGHT])
-		rend->ang_y += rend->delta_time * 40.0f;
-	if (rend->keys[GLFW_KEY_LEFT])
-		rend->ang_y -= rend->delta_time * 40.0f;
-	if (rend->keys[GLFW_KEY_COMMA])
-		rend->ang_z += rend->delta_time * 40.0f;
-	if (rend->keys[GLFW_KEY_PERIOD])
-		rend->ang_z -= rend->delta_time * 40.0f;
+	rend->ang_y += rend->delta_time * 40.0f;
 }
 
 static void	do_movement2(t_render *rend, float delta)
