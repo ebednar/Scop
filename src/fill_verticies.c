@@ -71,21 +71,13 @@ static void recenter(t_model *mod)
 	offset_mod(mod, (max[0] + min[0]) / 2, (max[1] + min[1]) / 2);
 }
 
-void		fill_verticies(t_model *mod, float **mod_data,
+void		fill_verticies(t_model *mod, float **mod_data, float **vt_data, float **vn_data,
 unsigned int **ind_data)
 {
 	int i;
 	int j;
 	int k;
 
-	i = -1;
-	k = -1;
-	while (++i < (int)mod->v_count)
-	{
-		j = -1;
-		while (++j < 8)
-			mod->verticies[++k] = mod_data[i][j];
-	}
 	i = -1;
 	k = -1;
 	while (++i < (int)mod->i_count)
@@ -97,6 +89,35 @@ unsigned int **ind_data)
 				error(6);
 			mod->indicies[++k] = ind_data[i][j];
 		}
+		if (mod->vt_count)
+		{
+			mod_data[ind_data[i][0]][3] = vt_data[ind_data[i][3]][0];
+			mod_data[ind_data[i][0]][4] = vt_data[ind_data[i][3]][1];
+			mod_data[ind_data[i][1]][3] = vt_data[ind_data[i][4]][0];
+			mod_data[ind_data[i][1]][4] = vt_data[ind_data[i][4]][1];
+			mod_data[ind_data[i][2]][3] = vt_data[ind_data[i][5]][0];
+			mod_data[ind_data[i][2]][4] = vt_data[ind_data[i][5]][1];
+		}
+		if (mod->vn_count)
+		{
+			mod_data[ind_data[i][0]][5] = vn_data[ind_data[i][6]][0];
+			mod_data[ind_data[i][0]][6] = vn_data[ind_data[i][6]][1];
+			mod_data[ind_data[i][0]][7] = vn_data[ind_data[i][6]][2];
+			mod_data[ind_data[i][1]][5] = vn_data[ind_data[i][7]][0];
+			mod_data[ind_data[i][1]][6] = vn_data[ind_data[i][7]][1];
+			mod_data[ind_data[i][1]][7] = vn_data[ind_data[i][7]][2];
+			mod_data[ind_data[i][2]][5] = vn_data[ind_data[i][8]][0];
+			mod_data[ind_data[i][2]][6] = vn_data[ind_data[i][8]][1];
+			mod_data[ind_data[i][2]][7] = vn_data[ind_data[i][8]][2];
+		}
+	}
+	i = -1;
+	k = -1;
+	while (++i < (int)mod->v_count)
+	{
+		j = -1;
+		while (++j < 8)
+			mod->verticies[++k] = mod_data[i][j];
 	}
 	free_data(mod, mod_data, ind_data);
 	recenter(mod);

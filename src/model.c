@@ -34,7 +34,7 @@ static void	read_float(float *data, char *line, int offset)
 	}
 }
 
-static void	read_vert(float **mod_data, unsigned int **ind_data,
+static void	read_vert(float **mod_data, float **vt_data, float **vn_data, unsigned int **ind_data,
 char *path, t_model *mod)
 {
 	char	*line;
@@ -49,9 +49,9 @@ char *path, t_model *mod)
 		if (line[0] == 'v' && line[1] == ' ')
 			read_float(mod_data[vert[0]++], line, 0);
 		if (line[0] == 'v' && line[1] == 't')
-			read_float(mod_data[vert[1]++], line, 3);
+			read_float(vt_data[vert[1]++], line, 0);
 		if (line[0] == 'v' && line[1] == 'n')
-			read_float(mod_data[vert[2]++], line, 5);
+			read_float(vn_data[vert[2]++], line, 0);
 		if (line[0] == 'f')
 			read_int(ind_data, &(vert[3]), line);
 		free(line);
@@ -84,7 +84,6 @@ static void	init_vert_count(t_model *mod, char *path)
 			read_material(mod, line);
 		free(line);
 	}
-	ft_putendl("ind checked");
 	close(fd);
 }
 
@@ -94,6 +93,7 @@ static void	vert_count(t_model *mod, char *path)
 	mod->is_texture = 1;
 	mod->v_count = 0;
 	mod->i_count = 0;
+	mod->f_count = 0;
 	mod->material_name = NULL;
 	mod->vt_count = 0;
 	mod->vn_count = 0;
@@ -105,8 +105,10 @@ static void	vert_count(t_model *mod, char *path)
 void		load_model(t_model *mod, char *path)
 {
 	float			**mod_data;
+	float			**vt_data;
+	float			**vn_data;
 	unsigned int	**ind_data;
-	unsigned int	i;
+	int	i;
 
 	vert_count(mod, path);
 	if (!(mod_data = (float **)malloc(mod->v_count * sizeof(float *))))
@@ -115,20 +117,31 @@ void		load_model(t_model *mod, char *path)
 	* sizeof(unsigned int *))))
 		error(4);
 	i = -1;
-	while (++i < mod->v_count)
+	while (++i < (int)mod->v_count)
 		if (!(mod_data[i] = (float *)malloc(8 * sizeof(float))))
 			error(4);
+
+	if (!(vt_data = (float **)malloc(mod->vt_count * sizeof(float *))))
+		error(4);
+	if (!(vn_data = (float **)malloc(mod->vn_count * sizeof(float *))))
+		error(4);
 	i = -1;
-	while (++i < mod->i_count)
-		if (!(ind_data[i] = (unsigned int *)malloc(3 * sizeof(unsigned int))))
+	while (++i < (int)mod->vt_count)
+		if (!(vt_data[i] = (float *)malloc(2 * sizeof(float))))
 			error(4);
-	ft_putendl("start read vert");
-	read_vert(mod_data, ind_data, path, mod);
+	i = -1;
+	while (++i < (int)mod->vn_count)
+		if (!(vn_data[i] = (float *)malloc(3 * sizeof(float))))
+			error(4);
+	i = -1;
+	while (++i < (int)mod->i_count)
+		if (!(ind_data[i] = (unsigned int *)malloc(9 * sizeof(unsigned int))))
+			error(4);
+	read_vert(mod_data, vt_data, vn_data, ind_data, path, mod);
 	if (!(mod->verticies = (float *)malloc((8 * mod->v_count) * sizeof(float))))
 		error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->i_count)
 	* sizeof(unsigned int))))
 		error(4);
-	ft_putendl("start fill vert");
-	fill_verticies(mod, mod_data, ind_data);
+	fill_verticies(mod, mod_data, vt_data, vn_data, ind_data);
 }

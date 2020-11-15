@@ -86,6 +86,7 @@ typedef struct		s_model
 	unsigned int	vn_count;
 	unsigned int	*indicies;
 	unsigned int	i_count;
+	unsigned int	f_count;
 	int				is_texture;
 	char			*material_name;
 	float			specular[3];
@@ -121,7 +122,7 @@ void				check_indecies(t_model *mod, char *line);
 void				fill_texture(float **mod_data, t_model *mod);
 void				fill_normal(float **mod_data, unsigned int **ind_data
 , int i_count);
-void				fill_verticies(t_model *mod, float **mod_data
+void				fill_verticies(t_model *mod, float **mod_data, float **vt_data, float **vn_data
 , unsigned int **ind_data);
 void				read_int(unsigned int **data, int *numb, char *line);
 void				start_frame(t_render *rend);

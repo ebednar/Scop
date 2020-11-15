@@ -33,7 +33,7 @@ SRC = 	./src/main.c \
 		./src/error.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
-FLAGS = -Wall -Wextra -Werror
+FLAGS = 
 INCLUDES = -I includes -I libft -I GLFW/include
 FRAMEWORKS = -framework OpenGL -framework Cocoa -framework IOKit
 LIBGLFW = ./GLFW/lib-macos/libglfw3.a

@@ -19,20 +19,15 @@ void		check_indecies(t_model *mod, char *line)
 
 	count = 0;
 	ptr1 = line + 1;
-	ft_putendl(line);
 	while (*ptr1 != '\0')
-	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')
 		{
 			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
-			{
 				ptr1++;
-			}
 			count++;
 		}
 		else
 			ptr1++;
-	}
 	if (count == 3)
 		mod->i_count++;
 	else if (count == 4)
@@ -41,19 +36,36 @@ void		check_indecies(t_model *mod, char *line)
 		error(6);
 }
 
-static void	div_square(unsigned int **data, int *numb, int count, int *ind)
+#include <stdio.h>
+
+static void	div_square(unsigned int **data, int *numb, int count, int **ind)
 {
 	int i;
+	int j;
+	int k;
 
-	i = -1;
-	while (++i < 3)
-		data[*numb][i] = ind[i];
+	j = -1;
+	k = 0;
+	while (++j < 3)
+	{
+		i = -1;
+		while (++i < 3)
+		{
+			
+			data[*numb][k] = ind[i][j];
+			k++;
+		}	
+	}
 	(*numb)++;
 	if (count == 4)
 	{
-		data[*numb][0] = ind[2];
-		data[*numb][1] = ind[3];
-		data[*numb][2] = ind[0];
+		i = -1;
+		while (++i < 3)
+		{
+			data[*numb][0 + i * 3] = ind[2][i];
+			data[*numb][1 + i * 3] = ind[3][i];
+			data[*numb][2 + i * 3] = ind[0][i];
+		}
 		(*numb)++;
 	}
 }
@@ -62,17 +74,42 @@ void		read_int(unsigned int **data, int *numb, char *line)
 {
 	char	*ptr1;
 	int		count;
-	int		ind[4];
+	int		**ind;
+	int		i;
 
+	i = -1;
+	ind = (int **)malloc(4 * sizeof(int *));
+	while (++i < 4)
+	{
+		ind[i] = (int *)malloc(3 * sizeof(int));
+		ft_bzero(ind[i], 12);
+	}
 	count = 0;
 	ptr1 = line + 1;
-	ft_putendl("read ind");
 	while (*ptr1 != '\0')
 	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')
 		{
-			ind[count] = ft_atoi(ptr1) - 1;
-			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
+			ind[count][0] = ft_atoi(ptr1) - 1;
+			while ((*ptr1 >= '0' && *ptr1 <= '9'))
+				ptr1++;
+			if (*ptr1 == '/')
+			{
+				ptr1++;
+				ind[count][1] = ft_atoi(ptr1) - 1;
+			}
+			else
+				ind[count][1] = ind[count][0];
+			while ((*ptr1 >= '0' && *ptr1 <= '9'))
+				ptr1++;
+			if (*ptr1 == '/')
+			{
+				ptr1++;
+				ind[count][2] = ft_atoi(ptr1) - 1;
+			}
+			else
+				ind[count][2] = ind[count][0];
+			while ((*ptr1 >= '0' && *ptr1 <= '9'))
 				ptr1++;
 			count++;
 		}
@@ -80,4 +117,8 @@ void		read_int(unsigned int **data, int *numb, char *line)
 			ptr1++;
 	}
 	div_square(data, numb, count, ind);
+	i = -1;
+	while (++i < 4)
+		free(ind[i]);
+	free(ind);
 }
