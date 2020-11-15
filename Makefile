@@ -26,6 +26,7 @@ SRC = 	./src/main.c \
 		./src/model.c \
 		./src/read_indicies.c \
 		./src/fill_verticies.c \
+		./src/fill_text_norm.c \
 		./src/draw.c \
 		./src/material.c \
 		./src/mouse.c \

@@ -26,7 +26,7 @@ static void	mod_contrlos(t_render *rend)
 		rend->z += rend->delta_time * 1.5f;
 	if (rend->keys[GLFW_KEY_L])
 		rend->z -= rend->delta_time * 1.5f;
-	rend->ang_y += rend->delta_time * 40.0f;
+	rend->ang_y += rend->delta_time * 10.0f;
 }
 
 static void	do_movement2(t_render *rend, float delta)

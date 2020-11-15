@@ -49,7 +49,9 @@ int			main(int argc, char **argv)
 		error(4);
 	make_context(rend);
 	load_model(mod, argv[1]);
+	ft_putendl("init base");
 	init_base_data(rend, mat, mod);
+	ft_putendl("main loop");
 	while (!glfwWindowShouldClose(rend->window))
 	{
 		key_callback(rend);

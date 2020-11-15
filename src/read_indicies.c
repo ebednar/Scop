@@ -19,6 +19,7 @@ void		check_indecies(t_model *mod, char *line)
 
 	count = 0;
 	ptr1 = line + 1;
+	ft_putendl(line);
 	while (*ptr1 != '\0')
 	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')
@@ -65,6 +66,7 @@ void		read_int(unsigned int **data, int *numb, char *line)
 
 	count = 0;
 	ptr1 = line + 1;
+	ft_putendl("read ind");
 	while (*ptr1 != '\0')
 	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')

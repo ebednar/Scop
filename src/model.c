@@ -63,8 +63,7 @@ char *path, t_model *mod)
 	close(fd);
 }
 
-static void	init_vert_count(t_model *mod, char *path,
-unsigned int *vt_count, unsigned int *vn_count)
+static void	init_vert_count(t_model *mod, char *path)
 {
 	int				fd;
 	char			*line;
@@ -76,33 +75,30 @@ unsigned int *vt_count, unsigned int *vn_count)
 		if (line[0] == 'v' && line[1] == ' ')
 			mod->v_count++;
 		if (line[0] == 'v' && line[1] == 't')
-			vt_count++;
+			mod->vt_count++;
 		if (line[0] == 'v' && line[1] == 'n')
-			vn_count++;
+			mod->vn_count++;
 		if (line[0] == 'f')
 			check_indecies(mod, line);
 		if (!(ft_strncmp(line, "mtllib", 6)))
 			read_material(mod, line);
 		free(line);
 	}
+	ft_putendl("ind checked");
 	close(fd);
 }
 
 static void	vert_count(t_model *mod, char *path)
 {
-	unsigned int	vt_count;
-	unsigned int	vn_count;
-
 	check_file(path);
 	mod->is_texture = 1;
 	mod->v_count = 0;
 	mod->i_count = 0;
 	mod->material_name = NULL;
-	vt_count = 0;
-	vn_count = 0;
-	init_vert_count(mod, path, &vt_count, &vn_count);
-	if (mod->v_count == 0 || mod->i_count == 0 || vn_count > mod->v_count
-	|| vt_count > mod->v_count)
+	mod->vt_count = 0;
+	mod->vn_count = 0;
+	init_vert_count(mod, path);
+	if (mod->v_count == 0 || mod->i_count == 0)
 		error(6);
 }
 
@@ -126,11 +122,13 @@ void		load_model(t_model *mod, char *path)
 	while (++i < mod->i_count)
 		if (!(ind_data[i] = (unsigned int *)malloc(3 * sizeof(unsigned int))))
 			error(4);
+	ft_putendl("start read vert");
 	read_vert(mod_data, ind_data, path, mod);
 	if (!(mod->verticies = (float *)malloc((8 * mod->v_count) * sizeof(float))))
 		error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->i_count)
 	* sizeof(unsigned int))))
 		error(4);
+	ft_putendl("start fill vert");
 	fill_verticies(mod, mod_data, ind_data);
 }

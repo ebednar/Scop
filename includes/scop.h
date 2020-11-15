@@ -82,6 +82,8 @@ typedef struct		s_model
 {
 	float			*verticies;
 	unsigned int	v_count;
+	unsigned int	vt_count;
+	unsigned int	vn_count;
 	unsigned int	*indicies;
 	unsigned int	i_count;
 	int				is_texture;

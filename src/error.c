@@ -34,6 +34,6 @@ void	error(int code)
 	if (code == 5)
 		ft_putendl("Usage: ./scop [path/file_name.obj]");
 	if (code == 6)
-		ft_putendl("corrupted file");
+		ft_putendl("invalid file");
 	exit(code);
 }
