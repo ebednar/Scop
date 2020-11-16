@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:56 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/16 20:20:29 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 23:07:40 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,7 @@ void		check_indecies(t_model *mod, char *line)
 			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
 			{
 				if (*ptr1 == '/')
-				{
 					mod->is_texture = 0;
-					mod->is_normal = 0;
-				}
 				ptr1++;
 			}
 			count++;
@@ -43,8 +40,6 @@ void		check_indecies(t_model *mod, char *line)
 		error(6);
 }
 
-#include <stdio.h>
-
 static void	div_square(unsigned int **data, int *numb, int count, int **ind)
 {
 	int i;
@@ -57,11 +52,7 @@ static void	div_square(unsigned int **data, int *numb, int count, int **ind)
 	{
 		i = -1;
 		while (++i < 3)
-		{
-			
-			data[*numb][k] = ind[i][j];
-			k++;
-		}	
+			data[*numb][k++] = ind[i][j];
 	}
 	(*numb)++;
 	if (count == 4)
@@ -75,6 +66,46 @@ static void	div_square(unsigned int **data, int *numb, int count, int **ind)
 		}
 		(*numb)++;
 	}
+}
+
+int			pars_ind(char *ptr1, int **ind, int count)
+{
+	int	i;
+
+	i = 0;
+	ind[count][0] = ft_atoi(&ptr1[i]) - 1;
+	while ((ptr1[i] >= '0' && ptr1[i] <= '9'))
+		i++;
+	if (ptr1[i] == '/')
+	{
+		i++;
+		ind[count][1] = ft_atoi(&ptr1[i]) - 1;
+	}
+	else
+		ind[count][1] = ind[count][0];
+	while ((ptr1[i] >= '0' && ptr1[i] <= '9'))
+		i++;
+	if (ptr1[i] == '/')
+	{
+		i++;
+		ind[count][2] = ft_atoi(&ptr1[i]) - 1;
+	}
+	else
+		ind[count][2] = ind[count][0];
+	while ((ptr1[i] >= '0' && ptr1[i] <= '9'))
+		i++;
+	return (i);
+}
+
+static void	final_read(unsigned int **data, int *numb, int count, int **ind)
+{
+	int i;
+
+	div_square(data, numb, count, ind);
+	i = -1;
+	while (++i < 4)
+		free(ind[i]);
+	free(ind);
 }
 
 void		read_int(unsigned int **data, int *numb, char *line)
@@ -94,38 +125,13 @@ void		read_int(unsigned int **data, int *numb, char *line)
 	count = 0;
 	ptr1 = line + 1;
 	while (*ptr1 != '\0')
-	{
 		if (*ptr1 >= '0' && *ptr1 <= '9')
 		{
-			ind[count][0] = ft_atoi(ptr1) - 1;
-			while ((*ptr1 >= '0' && *ptr1 <= '9'))
-				ptr1++;
-			if (*ptr1 == '/')
-			{
-				ptr1++;
-				ind[count][1] = ft_atoi(ptr1) - 1;
-			}
-			else
-				ind[count][1] = ind[count][0];
-			while ((*ptr1 >= '0' && *ptr1 <= '9'))
-				ptr1++;
-			if (*ptr1 == '/')
-			{
-				ptr1++;
-				ind[count][2] = ft_atoi(ptr1) - 1;
-			}
-			else
-				ind[count][2] = ind[count][0];
-			while ((*ptr1 >= '0' && *ptr1 <= '9'))
-				ptr1++;
+			i = pars_ind(ptr1, ind, count);
+			ptr1 += i;
 			count++;
 		}
 		else
 			ptr1++;
-	}
-	div_square(data, numb, count, ind);
-	i = -1;
-	while (++i < 4)
-		free(ind[i]);
-	free(ind);
+	final_read(data, numb, count, ind);
 }
