@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 18:10:36 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 20:03:59 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 21:01:56 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct		s_render
 	short int		state;
 	short int		wire;
 	short int		scene;
+	float			smooth;
 }					t_render;
 
 typedef struct		s_image
@@ -88,6 +89,7 @@ typedef struct		s_model
 	unsigned int	i_count;
 	unsigned int	f_count;
 	int				is_texture;
+	int				is_normal;
 	char			*material_name;
 	float			specular[3];
 	int				shininess;
@@ -121,7 +123,7 @@ void				load_model(t_model *mod, char *path);
 void				check_indecies(t_model *mod, char *line);
 void				fill_texture(float **mod_data, t_model *mod);
 void				fill_normal(float **mod_data, unsigned int **ind_data
-, int i_count);
+, int i_count, t_model *mod);
 void				fill_verticies(t_model *mod, float **mod_data, float **vt_data, float **vn_data
 , unsigned int **ind_data);
 void				read_int(unsigned int **data, int *numb, char *line);

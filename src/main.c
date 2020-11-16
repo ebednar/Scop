@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 21:39:20 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 20:09:25 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 20:23:49 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,7 @@ int			main(int argc, char **argv)
 		error(4);
 	make_context(rend);
 	load_model(mod, argv[1]);
-	ft_putendl("init base");
 	init_base_data(rend, mat, mod);
-	ft_putendl("main loop");
 	while (!glfwWindowShouldClose(rend->window))
 	{
 		key_callback(rend);

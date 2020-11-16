@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:38 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 19:54:14 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 21:08:38 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void		start_pos(t_render *rend)
 	rend->ang_x = 0.0f;
 	rend->ang_y = 0.0f;
 	rend->ang_z = 0.0f;
+	rend->smooth = 0.0f;
 }
 
 static void	init_material(t_model *mod)

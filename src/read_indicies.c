@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:56 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:02:08 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 20:20:29 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,14 @@ void		check_indecies(t_model *mod, char *line)
 		if (*ptr1 >= '0' && *ptr1 <= '9')
 		{
 			while ((*ptr1 >= '0' && *ptr1 <= '9') || *ptr1 == '/')
+			{
+				if (*ptr1 == '/')
+				{
+					mod->is_texture = 0;
+					mod->is_normal = 0;
+				}
 				ptr1++;
+			}
 			count++;
 		}
 		else

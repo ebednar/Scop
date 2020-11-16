@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:35 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:14:07 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 20:19:14 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ unsigned int **ind_data)
 			mod_data[ind_data[i][2]][3] = vt_data[ind_data[i][5]][0];
 			mod_data[ind_data[i][2]][4] = vt_data[ind_data[i][5]][1];
 		}
-		if (mod->vn_count)
+		if (mod->vn_count && mod->is_normal)
 		{
 			mod_data[ind_data[i][0]][5] = vn_data[ind_data[i][6]][0];
 			mod_data[ind_data[i][0]][6] = vn_data[ind_data[i][6]][1];

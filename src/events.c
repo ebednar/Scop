@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/15 23:02:39 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 19:58:49 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 21:18:57 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,9 @@ void		key_callback(t_render *rend)
 	switch_light(rend);
 	if (rend->keys[GLFW_KEY_T] && !rend->fkeys[GLFW_KEY_T])
 	{
-		rend->state = (rend->state + 1) % 3;
+		rend->state = (rend->state + 1) % 5;
+		if (rend->state == 1)
+			rend->smooth = 1.0f;
 		rend->fkeys[GLFW_KEY_T] = 1;
 	}
 	switch_scene(rend);

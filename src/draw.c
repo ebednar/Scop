@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:27 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 20:03:39 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 21:04:31 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ static void	init_frame(t_render *rend)
 	rend->light_switch[0], rend->light_switch[1], rend->light_switch[2]);
 	glUniform1i(glGetUniformLocation(rend->shader.mod_shader, "u_state"),
 	rend->state);
+	glUniform1f(glGetUniformLocation(rend->shader.mod_shader, "u_smooth"),
+	rend->smooth);
 	glUniform3f(glGetUniformLocation(rend->shader.mod_shader, "u_viewPos"),
 	rend->cam->pos[0], rend->cam->pos[1], rend->cam->pos[2]);
 	glUniform3f(glGetUniformLocation(rend->shader.mod_shader,

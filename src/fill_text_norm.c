@@ -28,13 +28,14 @@ void		fill_texture(float **mod_data, t_model *mod)
 	}
 }
 
-void		fill_normal(float **mod_data, unsigned int **ind_data, int i_count)
+void		fill_normal(float **mod_data, unsigned int **ind_data, int i_count, t_model *mod)
 {
 	int		i;
 	float	vec1[3];
 	float	vec2[3];
 	float	norm[3];
 
+	mod->is_normal = 0;
 	i = -1;
 	while (++i < i_count)
 	{

@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:44 by ebednar           #+#    #+#             */
-/*   Updated: 2020/10/23 22:22:05 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 20:07:57 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ void		load_material(t_model *mod)
 	free(mod->material_name);
 	if ((fd = open(str, O_RDONLY)) < 0)
 	{
-		ft_putendl("no material file");
 		close(fd);
 		free(str);
 		return ;

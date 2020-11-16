@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:51 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/05 20:04:11 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/16 20:22:43 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ char *path, t_model *mod)
 	}
 	if (vert[1] == 0)
 		fill_texture(mod_data, mod);
-	if (vert[2] == 0)
-		fill_normal(mod_data, ind_data, mod->i_count);
+	if (vert[2] == 0 || !mod->is_normal)
+		fill_normal(mod_data, ind_data, mod->i_count, mod);
 	close(fd);
 }
 
@@ -91,6 +91,7 @@ static void	vert_count(t_model *mod, char *path)
 {
 	check_file(path);
 	mod->is_texture = 1;
+	mod->is_normal = 1;
 	mod->v_count = 0;
 	mod->i_count = 0;
 	mod->f_count = 0;
