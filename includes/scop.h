@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/06 18:10:36 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/16 21:01:56 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/19 18:50:14 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ typedef struct		s_image
 typedef struct		s_model
 {
 	float			*verticies;
+	float			**vt_data;
+	float			**vn_data;
 	unsigned int	v_count;
 	unsigned int	vt_count;
 	unsigned int	vn_count;
@@ -124,8 +126,9 @@ void				check_indecies(t_model *mod, char *line);
 void				fill_texture(float **mod_data, t_model *mod);
 void				fill_normal(float **mod_data, unsigned int **ind_data
 , int i_count, t_model *mod);
-void				fill_verticies(t_model *mod, float **mod_data, float **vt_data, float **vn_data
-, unsigned int **ind_data);
+void				fill_verticies(t_model *mod, float **mod_data,
+unsigned int **ind_data);
+void				read_float(float *data, char *line, int offset);
 void				read_int(unsigned int **data, int *numb, char *line);
 void				start_frame(t_render *rend);
 void				draw_cycle(t_render *rend, t_matrices *mat, t_model *mod);
@@ -135,5 +138,6 @@ void				draw_point_light(t_render *rend, t_matrices *mat
 , unsigned int vao, t_model *mod);
 void				read_material(t_model *mod, char *str);
 void				check_file(char *path);
+void				recenter(t_model *mod);
 
 #endif

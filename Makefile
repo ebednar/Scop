@@ -6,7 +6,7 @@
 #    By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/20 14:23:06 by twitting          #+#    #+#              #
-#    Updated: 2020/11/05 19:57:13 by ebednar          ###   ########.fr        #
+#    Updated: 2020/11/19 18:50:26 by ebednar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,15 +25,17 @@ SRC = 	./src/main.c \
 		./src/camera.c \
 		./src/model.c \
 		./src/read_indicies.c \
+		./src/read_vert.c \
 		./src/fill_verticies.c \
 		./src/fill_text_norm.c \
 		./src/draw.c \
 		./src/material.c \
 		./src/mouse.c \
-		./src/error.c
+		./src/error.c \
+		./src/recenter.c
 LIBFT = ./libft/libft.a
 OBJECTS = $(SRC:.c=.o)
-FLAGS = 
+FLAGS = -Wall -Wextra -Werror
 INCLUDES = -I includes -I libft -I GLFW/include
 FRAMEWORKS = -framework OpenGL -framework Cocoa -framework IOKit
 LIBGLFW = ./GLFW/lib-macos/libglfw3.a

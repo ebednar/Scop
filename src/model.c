@@ -6,35 +6,13 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:51 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/16 20:22:43 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/19 18:46:25 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-static void	read_float(float *data, char *line, int offset)
-{
-	char	*ptr1;
-	char	*ptr2;
-	int		i;
-
-	i = -1;
-	while (line[++i] != '\0')
-	{
-		if ((line[i] < '0' || line[i] > '9') && line[i] != '.'
-		&& line[i] != '-' && line[i] != '+')
-			line[i] = ' ';
-	}
-	i = -1;
-	ptr1 = line + 2;
-	while (++i < (offset == 3 ? 2 : 3))
-	{
-		data[i + offset] = strtof(ptr1, &ptr2);
-		ptr1 = ptr2;
-	}
-}
-
-static void	read_vert(float **mod_data, float **vt_data, float **vn_data, unsigned int **ind_data,
+static void	read_vert(float **mod_data, unsigned int **ind_data,
 char *path, t_model *mod)
 {
 	char	*line;
@@ -49,9 +27,9 @@ char *path, t_model *mod)
 		if (line[0] == 'v' && line[1] == ' ')
 			read_float(mod_data[vert[0]++], line, 0);
 		if (line[0] == 'v' && line[1] == 't')
-			read_float(vt_data[vert[1]++], line, 0);
+			read_float(mod->vt_data[vert[1]++], line, 0);
 		if (line[0] == 'v' && line[1] == 'n')
-			read_float(vn_data[vert[2]++], line, 0);
+			read_float(mod->vn_data[vert[2]++], line, 0);
 		if (line[0] == 'f')
 			read_int(ind_data, &(vert[3]), line);
 		free(line);
@@ -103,13 +81,32 @@ static void	vert_count(t_model *mod, char *path)
 		error(6);
 }
 
+static void	alloc_vert(t_model *mod, float **mod_data, unsigned int **ind_data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < (int)mod->v_count)
+		if (!(mod_data[i] = (float *)malloc(8 * sizeof(float))))
+			error(4);
+	i = -1;
+	while (++i < (int)mod->i_count)
+		if (!(ind_data[i] = (unsigned int *)malloc(9 * sizeof(unsigned int))))
+			error(4);
+	i = -1;
+	while (++i < (int)mod->vt_count)
+		if (!(mod->vt_data[i] = (float *)malloc(2 * sizeof(float))))
+			error(4);
+	i = -1;
+	while (++i < (int)mod->vn_count)
+		if (!(mod->vn_data[i] = (float *)malloc(3 * sizeof(float))))
+			error(4);
+}
+
 void		load_model(t_model *mod, char *path)
 {
 	float			**mod_data;
-	float			**vt_data;
-	float			**vn_data;
 	unsigned int	**ind_data;
-	int	i;
 
 	vert_count(mod, path);
 	if (!(mod_data = (float **)malloc(mod->v_count * sizeof(float *))))
@@ -117,32 +114,16 @@ void		load_model(t_model *mod, char *path)
 	if (!(ind_data = (unsigned int **)malloc(mod->i_count
 	* sizeof(unsigned int *))))
 		error(4);
-	i = -1;
-	while (++i < (int)mod->v_count)
-		if (!(mod_data[i] = (float *)malloc(8 * sizeof(float))))
-			error(4);
-
-	if (!(vt_data = (float **)malloc(mod->vt_count * sizeof(float *))))
+	if (!(mod->vt_data = (float **)malloc(mod->vt_count * sizeof(float *))))
 		error(4);
-	if (!(vn_data = (float **)malloc(mod->vn_count * sizeof(float *))))
+	if (!(mod->vn_data = (float **)malloc(mod->vn_count * sizeof(float *))))
 		error(4);
-	i = -1;
-	while (++i < (int)mod->vt_count)
-		if (!(vt_data[i] = (float *)malloc(2 * sizeof(float))))
-			error(4);
-	i = -1;
-	while (++i < (int)mod->vn_count)
-		if (!(vn_data[i] = (float *)malloc(3 * sizeof(float))))
-			error(4);
-	i = -1;
-	while (++i < (int)mod->i_count)
-		if (!(ind_data[i] = (unsigned int *)malloc(9 * sizeof(unsigned int))))
-			error(4);
-	read_vert(mod_data, vt_data, vn_data, ind_data, path, mod);
+	alloc_vert(mod, mod_data, ind_data);
+	read_vert(mod_data, ind_data, path, mod);
 	if (!(mod->verticies = (float *)malloc((8 * mod->v_count) * sizeof(float))))
 		error(4);
 	if (!(mod->indicies = (unsigned int *)malloc((3 * mod->i_count)
 	* sizeof(unsigned int))))
 		error(4);
-	fill_verticies(mod, mod_data, vt_data, vn_data, ind_data);
+	fill_verticies(mod, mod_data, ind_data);
 }

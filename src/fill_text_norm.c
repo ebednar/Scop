@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 22:14:01 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/16 22:14:05 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/19 18:59:39 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,22 @@ void		fill_texture(float **mod_data, t_model *mod)
 	}
 }
 
-void		fill_normal(float **mod_data, unsigned int **ind_data, int i_count, t_model *mod)
+static void	norm_util(float *norm, float **mod_data,
+unsigned int **ind_data, int i)
+{
+	mod_data[ind_data[i][0]][5] = norm[0];
+	mod_data[ind_data[i][1]][5] = norm[0];
+	mod_data[ind_data[i][2]][5] = norm[0];
+	mod_data[ind_data[i][0]][6] = norm[1];
+	mod_data[ind_data[i][1]][6] = norm[1];
+	mod_data[ind_data[i][2]][6] = norm[1];
+	mod_data[ind_data[i][0]][7] = norm[2];
+	mod_data[ind_data[i][1]][7] = norm[2];
+	mod_data[ind_data[i][2]][7] = norm[2];
+}
+
+void		fill_normal(float **mod_data, unsigned int **ind_data,
+int i_count, t_model *mod)
 {
 	int		i;
 	float	vec1[3];
@@ -57,14 +72,6 @@ void		fill_normal(float **mod_data, unsigned int **ind_data, int i_count, t_mode
 		vec2[1] = mod_data[ind_data[i][2]][1] - mod_data[ind_data[i][0]][1];
 		vec2[2] = mod_data[ind_data[i][2]][2] - mod_data[ind_data[i][0]][2];
 		cross(norm, vec1, vec2);
-		mod_data[ind_data[i][0]][5] = norm[0];
-		mod_data[ind_data[i][1]][5] = norm[0];
-		mod_data[ind_data[i][2]][5] = norm[0];
-		mod_data[ind_data[i][0]][6] = norm[1];
-		mod_data[ind_data[i][1]][6] = norm[1];
-		mod_data[ind_data[i][2]][6] = norm[1];
-		mod_data[ind_data[i][0]][7] = norm[2];
-		mod_data[ind_data[i][1]][7] = norm[2];
-		mod_data[ind_data[i][2]][7] = norm[2];
+		norm_util(norm, mod_data, ind_data, i);
 	}
 }

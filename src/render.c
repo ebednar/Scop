@@ -6,7 +6,7 @@
 /*   By: ebednar <ebednar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/23 15:14:58 by ebednar           #+#    #+#             */
-/*   Updated: 2020/11/16 21:09:31 by ebednar          ###   ########.fr       */
+/*   Updated: 2020/11/19 18:10:28 by ebednar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	start_frame(t_render *rend)
 	rend->current_frame = glfwGetTime();
 	rend->delta_time = rend->current_frame - rend->old_frame;
 	rend->old_frame = rend->current_frame;
-	if(rend->smooth > 0.0f)
+	if (rend->smooth > 0.0f)
 		rend->smooth -= (0.3 * rend->delta_time);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
